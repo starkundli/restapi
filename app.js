@@ -2,46 +2,17 @@
 //https://www.youtube.com/playlist?list=PLdHg5T0SNpN3EoN3PEyCmPR42Ok_44OFT
 //https://www.youtube.com/watch?v=cGAdC4A5fF4&list=PPSV
 const express = require('express');
-const mongoose = require('mongoose');
-
+const dotenv = require('dotenv').config();
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
+// console.log(dotenv.parsed);
 
-// const bodyParser = require('body-parser');
-
-// app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(bodyParser.json());
-
-// app.use(express.urlencoded({ extended: false }));
-// app.use(express.json());
-
-//?retryWrites=true&w=majority/
- mongoose.connect(
-     "mongodb+srv://cluster0.4ff1t.mongodb.net/",
-      {
-         dbName:'restapi_youtube',
-         user:'killer',
-         pass:'DOQ1bb5KTNifTzlG',
-         // useNewUrlParser:true,
-         // useUnifiedTopology:true
-      }
- ).then(()=>{
-     console.log('mongodb connected...')
- })
-
-
-app.all('/test', (req,res)=>{
-    // console.log(req.query.name)
-    // res.send(req.query.name)
-    // console.log(req.params.name)
-    // res.send(req.params.id)
-    console.log(req.body);
-    res.send(req.body);
-})
-
+//initialise db
+require('./initdb.js')();
+ 
 const ProductRoute = require('./AdminRoutes/Products.route');
 // app.use('/products', ProductRoute);
 app.use('/products', ProductRoute.router);
@@ -66,11 +37,33 @@ app.use((err, req, res, next)=>{
         }
     })
 })
-
-app.listen(5000 , ()=>{
-    console.log ('started with express ...')
+// console.log(process.env.PORT);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT , ()=>{
+    console.log ('started with express at port ' + PORT + ' ...');
 });
 
+
+/*
+app.all('/test', (req,res)=>{
+    // console.log(req.query.name)
+    // res.send(req.query.name)
+    // console.log(req.params.name)
+    // res.send(req.params.id)
+    console.log(req.body);
+    res.send(req.body);
+})
+*/
+
+// const bodyParser = require('body-parser');
+
+// app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.json());
+
+// app.use(express.urlencoded({ extended: false }));
+// app.use(express.json());
+
+//?retryWrites=true&w=majority/
 
 
 
