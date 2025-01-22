@@ -1,0 +1,19 @@
+done sUrl = "http://pollution-monitor.com:8040/getNewLicense" , post , app/json
+done sUrl = "http://pollution-monitor.com:8040/updateLicense" , post , app/json
+done sUrl = "http://pollution-monitor.com:8040/license/list" , get , app/json
+done sUrl = "http://pollution-monitor.com:8040/clientdetail" , get , app/json
+done sUrl = "http://pollution-monitor.com:8040/clientdetail/update"
+done sUrl = "http://pollution-monitor.com:8040/clientdetail/update/any" , post , app/json
+sUrl = "http://pollution-monitor.com:8040/backup/create"
+sUrl = "http://pollution-monitor.com:8040/backup/getInfo"
+
+;NoAqhyXWJuv7ZgUCtuNt   created on 12.01.2025
+;K84TAsF4qO3NdKWWqVPQ   created on 12.01.2025
+
+
+done sUrl = "http://pollution-monitor.com:8040/activateNewLicense"
+sUrl = "http://pollution-monitor.com:8040/getotp"
+//sUrl = "http://pollution-monitor.com:8040/getlk/mobile"
+//sUrl = "http://pollution-monitor.com:8040/getlk/ip"
+
+String url = "http://pollution-monitor.com:8040/validateLicense";

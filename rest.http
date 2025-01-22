@@ -1,0 +1,116 @@
+
+GET http://localhost:5000/products/gap
+
+###
+GET http://localhost:5000/products/gop
+Content-Type: application/json
+
+{
+    "LKeys":"2wO7bY5rNYhsTw2JjDM1"
+}
+
+###
+PATCH http://localhost:5000/products/uop
+Content-Type: application/json
+
+{
+    "LKey":"jypIgyhvnxyL1HtVwmV4",
+    "appCode":"456",
+    "ClientName":"Umesh",
+    "validUpto": "2023-01-30",
+    "appName": "Expired"
+}
+
+
+###
+
+post http://localhost:5000/products/anp
+Content-Type: application/json
+
+{
+    "appGroup": "2030",
+    "appName": "Astro-Office - 2030",
+    "validUpto": "03/31/2025"
+    # "actCode": "",
+    # "ClName": "",
+    # "ClMobile": "",
+    # "ClEmail": "",
+    # "ClCity": "",
+    # "dev1": "",
+    # "dev2": "",
+    # "dev3": "",
+    # "dev4": "",
+    # "consF": "",
+    # "consU": "",
+    # "intpro": "",
+    # "actTS": "",
+    # "lastCommTS": ""
+    
+}
+
+###
+delete http://localhost:5000/products/67809b1e340cb2c22549054a
+
+
+
+###
+POST http://localhost:5000/test
+Content-Type: application/x-www-form-urlencoded
+
+name=iMac&price=999
+
+
+###
+GET http://localhost:5000/client/anl
+Content-Type: application/json
+
+{
+    "LKey": "phdp1YIShmZI01Pe85a7"
+    
+}
+
+###
+PATCH http://localhost:5000/client/anl
+Content-Type: application/json
+
+{
+    "LKey": "phdp1YIShmZI01Pe85a7",
+    "appGroup": "2030",
+    "appName": "Astro-Office - 2030",
+    "actCode": "1737022120590",
+    "ClName": "Kamlesh",
+    "ClMobile": "7666",
+    "ClEmail": "kdp@gmail.com",
+    "ClCity": "unr",
+    "dev1": "1",
+    "dev2": "2",
+    "dev3": "3",
+    "dev4": "4"
+        
+}
+
+###
+GET http://localhost:5000/client/gcd
+Content-Type: application/json; charset=utf-8
+
+{
+    "LKey":"2wO7bY5rNYhsTw2JjDMu" 
+}
+
+###
+PATCH http://localhost:5000/client/sudc
+Content-Type: application/json
+
+{
+    "LKey":"2wO7bY5rNYhsTw2JjDMu",
+    "ud4":"AA5EED10056FA1EBDE3CDF4D6CB35F626A30D4D2023518BC620B373AEA47C7651CA41E9B955901FC43F0503C4E144E851C3065E1EA1EDA882B14799AF9EB3083373C6E32"
+}
+
+###
+PATCH http://localhost:5000/products/uofc
+Content-Type: application/json
+{
+    "LKey":"lyAKCRdK1BYDlfTAIfmi" , 
+    "consF":"262AAF29745304A399E8F3F6B1745BFC5B904BC1FAA2DD073701697221E8B63611CD3A1B3045570AA380EBD450BB27B4E392CD0B9C0E5619EEC32A3580DD2A34FCBE4F224F2851C1D9E0BDEA95DE1079C59E185B0EDC17BDEBC4BCDD07CE747987140DB6A95E135ED0D3DFDDDBEC"
+
+}
