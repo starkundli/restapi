@@ -137,6 +137,8 @@ async function AddNewProduct(req, res, next) {
                 newProduct.intpro = "";
                 newProduct.actTS = "";
                 newProduct.lastCommTS = "";
+                var cd = new Date();
+                newProduct.createdON = cd;
 
                 const result = await newProduct.save();
                 if (result===null) {

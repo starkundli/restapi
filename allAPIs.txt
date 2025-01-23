@@ -17,3 +17,5 @@ sUrl = "http://pollution-monitor.com:8040/getotp"
 //sUrl = "http://pollution-monitor.com:8040/getlk/ip"
 
 String url = "http://pollution-monitor.com:8040/validateLicense";
+
+serviceURI = https://restapi-722316705274.us-central1.run.app

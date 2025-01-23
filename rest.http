@@ -2,6 +2,9 @@
 GET http://localhost:1974/products/gap
 
 ###
+GET https://restapi-722316705274.us-central1.run.app/products/gap
+
+###
 GET http://localhost:5000/products/gop
 Content-Type: application/json
 
@@ -24,7 +27,8 @@ Content-Type: application/json
 
 ###
 
-post http://localhost:5000/products/anp
+### post http://localhost:5000/products/anp
+POST  https://restapi-722316705274.us-central1.run.app/products/anp
 Content-Type: application/json
 
 {

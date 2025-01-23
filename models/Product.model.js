@@ -4,6 +4,7 @@ const productSchema = new Schema ({
 
     appGroup: {type : String, required: true } ,
     appName: {type : String, required: true } ,
+    createdON: {type : Date, required: false } , 
     validUpto: {type : Date, required: true } , 
     actCode: {type : String, required: false } ,
     LKey: {type : String, required: false } ,
