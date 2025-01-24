@@ -34,7 +34,7 @@ Content-Type: application/json
 {
     "appGroup": "2030",
     "appName": "Astro-Office - 2030",
-    "validUpto": "03/31/2025"
+    "validUpto": "04/30/2025"
     # "actCode": "",
     # "ClName": "",
     # "ClMobile": "",
@@ -111,10 +111,35 @@ Content-Type: application/json
 }
 
 ###
-PATCH http://localhost:5000/products/uofc
+PATCH http://localhost:1974/products/uofc
 Content-Type: application/json
+
 {
     "LKey":"lyAKCRdK1BYDlfTAIfmi" , 
     "consF":"262AAF29745304A399E8F3F6B1745BFC5B904BC1FAA2DD073701697221E8B63611CD3A1B3045570AA380EBD450BB27B4E392CD0B9C0E5619EEC32A3580DD2A34FCBE4F224F2851C1D9E0BDEA95DE1079C59E185B0EDC17BDEBC4BCDD07CE747987140DB6A95E135ED0D3DFDDDBEC"
+
+}
+
+###
+POST http://pollution-monitor.com:8040/license/list
+Content-Type: application/json
+
+{
+    "un":"admin" , 
+    "pwd":"itsencryptedby" , 
+    "sts":"01/01/2024" , 
+    "ets":"01/25/2025"
+}
+
+
+### POST  https://restapi-722316705274.us-central1.run.app/products/anp
+PATCH  http://localhost:1974/client/mkd
+Content-Type: application/json
+
+{
+    "LKey":"xdeXHoSNdZrEFYlGWMrv",
+    "appGroup":"2030",
+    "appName":"Astro-Office - 2030",
+    "validUpto":"04/30/2025"
 
 }

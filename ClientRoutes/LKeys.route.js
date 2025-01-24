@@ -15,7 +15,7 @@ app.use(express.urlencoded({extended:true}));
 
 
 router.use("/", async (req, res, next) => {
-    CurrLKey = req.body.LKey;
+    CurrLKey = req.body.LKey+'';
     // console.log((req.body.LKey + ' = ' + CurrLKey));
     // next();
     //res.send(req.body + '');
@@ -66,6 +66,8 @@ async function VerifyCurrentKey(updates) {
 router.patch('/anl' , (req,res,next) => { 
     if (CLKisValid) ActivateNewLicense(req, res, next)
 } );
+
+router.patch('/mkd' , (req,res,next) => { ModifyKeyDetails(req, res, next)} );
 
 router.patch('/uouc' , (req,res,next) => { UpdateOnlyUserConstants(req, res, next)});
 
@@ -130,6 +132,30 @@ async function UpdateOnlyUserConstants(req, res, next) {
         console.log(error.message);
     }
 }
+
+async function ModifyKeyDetails(req, res, next) {
+    try {
+        const updates = {
+            "LKey":req.body.LKey,
+            "appGroup":req.body.appGroup,
+            "appName":req.body.appName,
+            "validUpto":req.body.validUpto
+        };   //updating only appname appseries and vu  no matter whatever extra is passed
+        if (updates.LKey+''!='') {
+            const result = await allKeys.findOneAndUpdate({LKey:updates.LKey} , updates , {new:true} )
+            if (result==null) {
+                res.send('0');
+                console.log('nothing updated');
+            } else {
+                res.send('1');
+                console.log('entry updated' );
+            }
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
 
 
 function SetExpOTPForServer(ac) {
