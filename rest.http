@@ -4,13 +4,6 @@ GET http://localhost:1974/products/gap
 ###
 GET https://restapi-722316705274.us-central1.run.app/products/gap
 
-###
-GET http://localhost:5000/products/gop
-Content-Type: application/json
-
-{
-    "LKeys":"2wO7bY5rNYhsTw2JjDM1"
-}
 
 ###
 PATCH http://localhost:5000/products/uop
@@ -143,3 +136,37 @@ Content-Type: application/json
     "validUpto":"04/30/2025"
 
 }
+
+###
+POST http://localhost:1974/client/gcd
+Content-Type: application/json
+
+{
+    "LKey":"fMFJyHzKxkBw46IHWKC4"
+}
+
+
+###
+POST http://localhost:1974/client/rofk
+Content-Type: application/json
+
+{
+    "LKey":"fMFJyHzKxkBw46IHWKC4",
+    "actCode":"175676664567",
+    "ClName":"kamlesh",
+    "ClMobile":"k",
+    "ClEmail":"k",
+    "ClCity":"unr",
+    "intpro": "192.168.0.30",
+    "appGroup": "2030",
+    "appName": "Astro-Office - 2030"
+}
+
+###
+POST http://localhost:1974/client/vogk
+Content-Type: application/json
+
+{
+    "otp":"6636FmC4"
+}
+### "LKey":"fMFJyHzKxkBw46IHWKC4",

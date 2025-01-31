@@ -21,7 +21,7 @@ const productSchema = new Schema ({
     intpro: {type: String, required: false},
     actTS: {type: Date, required: false},
     lastCommTS: {type: Date, required: false},
-
+    reqlkdata: {type: String, required: false}, // storing otp and ts sent to client to verify received otp from client and check both ts diff (10secs) before sending , while lkey request from client
                           
 })
 const product = mongoose.model('product', productSchema )
