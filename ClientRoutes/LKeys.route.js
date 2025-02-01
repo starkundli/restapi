@@ -8,7 +8,7 @@ var CurrKeyDetails = null;
 var CLKisValid = false;
 var CLKisVerified = false;
 var WhichsoftVerified = false;
-var MobileEmailVerified = false;
+var MobileVerified = false;
 var exo = '';
 
 const app = express();
@@ -68,12 +68,12 @@ async function VerifyCurrentKey(updates) {
     
     CLKisVerified = false;
     WhichsoftVerified = false;
-    MobileEmailVerified = false;
+    MobileVerified = false;
     //const result = await allKeys.findOne({ LKey : { $regex: new RegExp(CurrLKey,'i')  } });    //ignoring case not spaces        
     //remming result and using CurrKeyDetails as it is intialised at / of each route call can be used in all next routes
     if (CurrKeyDetails===null) return;
     
-    if (CurrKeyDetails.appGroup!==updates.appGroup) return;
+    // if (CurrKeyDetails.appGroup!==updates.appGroup) return;
     if (CurrKeyDetails.appName!==updates.appName) return;
     WhichsoftVerified = true;
     
@@ -81,9 +81,9 @@ async function VerifyCurrentKey(updates) {
         //may be activating for the 1st time
     } else {
         if (CurrKeyDetails.ClMobile!==updates.ClMobile) return;
-        if (CurrKeyDetails.ClEmail!==updates.ClEmail) return;
+        // if (CurrKeyDetails.ClEmail!==updates.ClEmail) return;
     }
-    MobileEmailVerified = true;
+    MobileVerified = true;
     
     CLKisVerified = true;
     
@@ -117,15 +117,24 @@ async function VerifyOtpSendKey (req, res) {
         if (result===null || result==='') {
             resSend='0';
         } else {
-            resSend = result.LKey;
+            resSend = '-1';
+            if (result.ClMobile===req.body.ClMobile) {
+                if (result.appName===req.body.appName) {
+                    if (result.intpro===req.body.intpro) {
+                        resSend = result.LKey;
+                    }
+                }
+            }
         }
         
         // console.log( CurrKeyDetails.reqlkdata + '\n' + loggedOTP + ' = ' + loggedTS) ;
         res.send(resSend);
         if (resSend==='0') {
             console.log('otp mismatch / expired / not requested');
-        } else {
-            console.log('key sent');
+        } else if (resSend==='-1') {
+                console.log('name / ip / whichsoft mismatch');
+            } else {
+                console.log('key sent');
         }
         if (result!=null) {
             setTimeout(ResetLKData, 2*1000, result.LKey+'' , 2);
@@ -198,8 +207,8 @@ async function VerifyOtpSendKey_NR (req, res) {
 
 async function ResetLKData (firstParam, secondParam) {
     // do something
-    const updates = {"LKey":firstParam,
-        "reqlkdata":''};   //updating only reqlkdata , no matter whatever extra is passed
+    const updates = {"LKey":firstParam, "intpro":'',
+        "reqlkdata":''};   //updating only intpro and reqlkdata , no matter whatever extra is passed
     const result = await allKeys.findOneAndUpdate({LKey:updates.LKey} , updates , {new:true} )
     if (result===null) {
         console.log('nothing updated');
@@ -216,19 +225,23 @@ async function RequestOtpForKey(req, res) {
             if (!WhichsoftVerified) {
                 console.log('app not verifying');
                 res.send('-1');
-            } else if (!MobileEmailVerified) {
-                console.log('MobileEmail not verifying');
+            } else if (!MobileVerified) {
+                console.log('Mobile not verifying : ' + CurrKeyDetails.ClMobile);
                 res.send('-2');
             }
             return null;
         }
-        SetExpOTPForServer(inputs.actCode);
+
+        var d = new Date();
+        var seconds = Math.round(d.getTime() / 1);
+        // console.log(seconds + ' = ' + inputs.actCode);
+        SetExpOTPForServer((seconds+''));
         if (exo.length==4) {
             var now = new Date();
             //var lkdata = exo + "," + now ;
             var lkdata = exo + CurrKeyDetails.LKey.substr(0,2).toLowerCase() + CurrKeyDetails.LKey.substr(CurrKeyDetails.LKey.length-2).toLowerCase(); 
-            const updates = {"LKey":req.body.LKey,
-                "reqlkdata":lkdata};   //updating only reqlkdata , no matter whatever extra is passed
+            const updates = {"LKey":req.body.LKey, "intpro":req.body.intpro,
+                "reqlkdata":lkdata};   //updating only intpro and reqlkdata , no matter whatever extra is passed
             const result = await allKeys.findOneAndUpdate({LKey:updates.LKey} , updates , {new:true} )
             if (result==null) {
                 res.send('0');
@@ -340,12 +353,14 @@ function SetExpOTPForServer(ac) {
     exo = "";
 
     if (ac === 0) return ;
-    
+    // console.log(strAC + ' = ' + strAC.length);
     for (let i = strAC.length; i--;) {
         //divBy = val(mID(strAC, i, 1));
         divBy = Number(strAC.charAt(i));
+        // console.log(divBy);
         if (divBy > 1) break;
     }
+    //console.log(divBy);
     if (divBy > 1) {
         divbyval = ac / divBy //'val(val(ac) / val(divBy))
         strdivbyval = divbyval + '';

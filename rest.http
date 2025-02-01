@@ -147,18 +147,15 @@ Content-Type: application/json
 
 
 ###
+# POST https://restapi-722316705274.us-central1.run.app/client/rofk
+# "actCode":"175676664567",
 POST http://localhost:1974/client/rofk
 Content-Type: application/json
 
 {
     "LKey":"fMFJyHzKxkBw46IHWKC4",
-    "actCode":"175676664567",
-    "ClName":"kamlesh",
+    "intpro": "192.168.0.103",
     "ClMobile":"k",
-    "ClEmail":"k",
-    "ClCity":"unr",
-    "intpro": "192.168.0.30",
-    "appGroup": "2030",
     "appName": "Astro-Office - 2030"
 }
 
