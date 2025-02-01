@@ -128,7 +128,7 @@ async function VerifyOtpSendKey (req, res) {
         }
         
         // console.log( CurrKeyDetails.reqlkdata + '\n' + loggedOTP + ' = ' + loggedTS) ;
-        res.send(resSend);
+        res.send({'lk':resSend});
         if (resSend==='0') {
             console.log('otp mismatch / expired / not requested');
         } else if (resSend==='-1') {
