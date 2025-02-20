@@ -138,11 +138,27 @@ Content-Type: application/json
 }
 
 ###
+# POST http://localhost:1974/client/gcd
+# POST https://restapi-722316705274.us-central1.run.app/client/gcd
 POST http://localhost:1974/client/gcd
 Content-Type: application/json
 
 {
     "LKey":"fMFJyHzKxkBw46IHWKC4"
+}
+
+
+###
+# PATCH  https://restapi-722316705274.us-central1.run.app/admin/mkd
+PATCH http://localhost:1974/products/mkd
+Content-Type: application/json
+
+{
+    "LKey":"fMFJyHzKxkBw46IHWKC4",
+    "appGroup":"2030",
+    "appName":"Astro-Office - 2030",
+    "validUpto":"04/30/2025"
+    
 }
 
 
@@ -167,3 +183,25 @@ Content-Type: application/json
     "otp":"6636FmC4"
 }
 ### "LKey":"fMFJyHzKxkBw46IHWKC4",
+
+###
+
+POST http://pollution-monitor.com:8040/clientdetail
+Content-Type: application/json
+
+{
+    "lk":"8F71CmQ3HZPJzurvn8ve"
+}
+
+###
+
+POST http://localhost:1974/client/gofvk
+Content-Type: application/json
+
+{
+    "LKey":"YPyyA3KocxLItViIE08x",
+    "appGroup":"2030",
+    "appName":"Astro-Office - 2030",
+    "ClMobile": "76",
+    "ac" : "1739621794801"
+}

@@ -19,6 +19,8 @@ router.patch('/uofc' , (req,res,next) => { UpdateOnlyFactoryConstants(req, res, 
 
 router.post('/anp', (req, res, next ) => {AddNewProduct(req, res, next);});
 
+router.patch('/mkd' , (req,res,next) => { ModifyKeyDetails(req, res, next)} );
+
 async function GetAllProducts(req, res, next) {
     try {
         const results = await allProducts.find( {}, {} );
@@ -160,6 +162,31 @@ async function AddNewProduct(req, res, next) {
         console.log(error.message);
     }
 }
+
+
+async function ModifyKeyDetails(req, res, next) {
+    try {
+        const updates = {
+            "LKey":req.body.LKey,
+            "appGroup":req.body.appGroup,
+            "appName":req.body.appName,
+            "validUpto":req.body.validUpto
+        };   //updating only appname appseries and vu  no matter whatever extra is passed
+        if (updates.LKey+''!='') {
+            const result = await allProducts.findOneAndUpdate({LKey:updates.LKey} , updates , {new:true} )
+            if (result==null) {
+                res.send('0');
+                console.log('nothing updated');
+            } else {
+                res.send('1');
+                console.log('entry updated' );
+            }
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
 
 /*
 //Checking the crypto module

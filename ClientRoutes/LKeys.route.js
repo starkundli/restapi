@@ -93,8 +93,9 @@ router.patch('/anl' , (req,res,next) => {
     if (CLKisValid) ActivateNewLicense(req, res, next)
 } );
 
+/*
 router.patch('/mkd' , (req,res,next) => { ModifyKeyDetails(req, res, next)} );
-
+*/
 router.patch('/uouc' , (req,res,next) => { UpdateOnlyUserConstants(req, res, next)});
 
 router.post('/gcd', async (req, res, next ) => {
@@ -106,6 +107,8 @@ router.post('/gcd', async (req, res, next ) => {
 router.post('/rofk' , (req,res) => { RequestOtpForKey(req, res) } );
 
 router.post('/vogk' , (req,res) => { VerifyOtpSendKey(req, res) } );
+
+router.post('/gofvk' , (req,res) => { GetOtpForValidKey(req, res) } );
 
 async function VerifyOtpSendKey (req, res) {
     try {
@@ -213,7 +216,7 @@ async function ResetLKData (firstParam, secondParam) {
     if (result===null) {
         console.log('nothing updated');
     } else {
-        console.log('entry nullified after ' + secondParam + ' seconds ...' );
+        console.log(firstParam + ' entry nullified after ' + secondParam + ' seconds ...' );
     }
 };
 
@@ -262,6 +265,47 @@ async function RequestOtpForKey(req, res) {
     //ref : https://nodejs.org/en/learn/asynchronous-work/discover-javascript-timers
     setTimeout(ResetLKData, 30*1000, CurrKeyDetails.LKey, 30);
 
+}
+
+async function GetOtpForValidKey(req, res) {
+    try {
+        const inputs = req.body;
+        await VerifyCurrentKey(inputs);
+        if (!CLKisVerified) {
+            if (!WhichsoftVerified) {
+                console.log('app not verifying');
+                res.send('-1');
+            } else if (!MobileVerified) {
+                console.log('Mobile not verifying : ' + CurrKeyDetails.ClMobile);
+                res.send('-2');
+            }
+            return null;
+        }
+
+        var d = new Date();
+        var seconds = Math.round(d.getTime() / 1);        
+        
+        if (Math.abs(seconds-parseFloat(inputs.ac) > 2000 ) ) { //2 secs diff only
+            console.log (seconds + ' = ' + inputs.ac + ' = ' + (seconds - parseFloat(inputs.ac)));
+            // console.log (seconds - parseFloat(inputs.ac));
+            res.send('1');
+            return;    
+        }
+        
+        SetExpOTPForServer(inputs.ac);
+        var lkdata = exo + CurrKeyDetails.LKey.substr(0,2).toLowerCase() + CurrKeyDetails.LKey.substr(CurrKeyDetails.LKey.length-2).toLowerCase(); 
+        if (lkdata.length==8) {
+            res.send(lkdata+'');
+            // console.log('entry updated');
+        } else {
+            // res.send(result + '\nexo=' + exo);
+            // console.log('pls retry ...');
+            res.send('-3');
+        }
+    } catch (error) {
+        console.log(error.message);
+        res.send("0");
+    }
 }
 
 async function ActivateNewLicense(req, res, next) {
