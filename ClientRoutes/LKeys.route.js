@@ -283,17 +283,35 @@ async function GetOtpForValidKey(req, res) {
         }
 
         var d = new Date();
-        var seconds = Math.round(d.getTime() / 1);        
-        
-        if (Math.abs(seconds-parseFloat(inputs.ac) > 2000 ) ) { //2 secs diff only
-            console.log (seconds + ' = ' + inputs.ac + ' = ' + (seconds - parseFloat(inputs.ac)));
+        var seconds = Math.floor(d.getTime() / 1);      //Math.round was giving the 30-40 secs difference dny
+        //ref : https://stackoverflow.com/questions/25250551/node-js-how-to-generate-timestamp-unix-epoch-format
+        if (Math.abs(seconds-parseFloat(inputs.ac) ) > 2000 ) { //2 secs diff only
+            // console.log (seconds + ' = ' + inputs.ac + ' = ' + (seconds - parseFloat(inputs.ac)));
             // console.log (seconds - parseFloat(inputs.ac));
             res.send('1');
             return;    
         }
         
+        // console.log (seconds + ' = ' + inputs.ac + ' = ' + (seconds - parseFloat(inputs.ac)));
+        
         SetExpOTPForServer(inputs.ac);
-        var lkdata = exo + CurrKeyDetails.LKey.substr(0,2).toLowerCase() + CurrKeyDetails.LKey.substr(CurrKeyDetails.LKey.length-2).toLowerCase(); 
+        var lkdata = ''; //exo + CurrKeyDetails.LKey.substr(0,2).toLowerCase() + CurrKeyDetails.LKey.substr(CurrKeyDetails.LKey.length-2).toLowerCase(); 
+        var char1,char2,char3,char4;
+
+        if (isEven(exo.charAt(0))) {    //positions from right side of lkey
+            char1 = CurrKeyDetails.LKey.charAt(CurrKeyDetails.LKey.length-exo.charAt(0)-1).toLowerCase();
+            char2 = CurrKeyDetails.LKey.charAt(CurrKeyDetails.LKey.length-exo.charAt(1)-1).toLowerCase();
+            char3 = CurrKeyDetails.LKey.charAt(CurrKeyDetails.LKey.length-exo.charAt(2)-1).toLowerCase();
+            char4 = CurrKeyDetails.LKey.charAt(CurrKeyDetails.LKey.length-exo.charAt(3)-1).toLowerCase();
+        } else {        //get positions from left side of lkey
+            char1 = CurrKeyDetails.LKey.charAt(exo.charAt(0)).toLowerCase();
+            char2 = CurrKeyDetails.LKey.charAt(exo.charAt(1)).toLowerCase();
+            char3 = CurrKeyDetails.LKey.charAt(exo.charAt(2)).toLowerCase();
+            char4 = CurrKeyDetails.LKey.charAt(exo.charAt(3)).toLowerCase();
+        }
+        lkdata = exo + char1 + char2 + char3 + char4;
+        // console.log(lkdata);
+        
         if (lkdata.length==8) {
             res.send(lkdata+'');
             // console.log('entry updated');
@@ -424,5 +442,8 @@ function SetExpOTPForServer(ac) {
     //return exo;
 }
 
+function isEven(n) {
+    return (n % 2 === 0);
+}
 module.exports = router;
 

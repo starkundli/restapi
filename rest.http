@@ -199,9 +199,10 @@ POST http://localhost:1974/client/gofvk
 Content-Type: application/json
 
 {
-    "LKey":"YPyyA3KocxLItViIE08x",
+    "LKey":"fMFJyHzKxkBw46IHWKC4",
     "appGroup":"2030",
     "appName":"Astro-Office - 2030",
-    "ClMobile": "76",
-    "ac" : "1739621794801"
+    "ClMobile": "k",
+    "ac" : "1740309019937"
+            
 }
