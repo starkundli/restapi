@@ -25,7 +25,7 @@ router.use("/", async (req, res, next) => {
             next();
             return;
         } else {
-            console.log((req.body.LKey + ' = ' + CurrLKey));
+            // console.log((req.body.LKey + ' = ' + CurrLKey));
             return null;
         }
     }
@@ -39,7 +39,7 @@ router.use("/", async (req, res, next) => {
             var vd = new Date(result.validUpto);
             var cd = new Date();
             if (vd<cd) {
-                console.log('key expired');
+                // console.log('key expired');
                 res.send('0');
                 return null;
             } else {
@@ -52,12 +52,12 @@ router.use("/", async (req, res, next) => {
                 next();
             }
         } else {
-            console.log('key not found = ' + req.body.LKey);
+            // console.log('key not found = ' + req.body.LKey);
             res.send('1');
             //return null;
         }
     } else {
-        console.log('invalid key');
+        // console.log('invalid key');
         res.send('2');
         return null;
     }
@@ -292,7 +292,7 @@ async function GetOtpForValidKey(req, res) {
             return;    
         }
         
-        // console.log (seconds + ' = ' + inputs.ac + ' = ' + (seconds - parseFloat(inputs.ac)));
+        console.log (seconds + ' = ' + inputs.ac + ' = ' + (seconds - parseFloat(inputs.ac)));
         
         SetExpOTPForServer(inputs.ac);
         var lkdata = ''; //exo + CurrKeyDetails.LKey.substr(0,2).toLowerCase() + CurrKeyDetails.LKey.substr(CurrKeyDetails.LKey.length-2).toLowerCase(); 

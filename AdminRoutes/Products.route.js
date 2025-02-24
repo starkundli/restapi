@@ -25,7 +25,7 @@ async function GetAllProducts(req, res, next) {
     try {
         const results = await allProducts.find( {}, {} );
         res.send(results);
-        console.log(results.length + ' entries found' );
+        // console.log(results.length + ' entries found' );
     } catch (error) {
         console.log(error.message);
     }
@@ -42,10 +42,10 @@ async function GetOneProduct(req, res, next) {
             if (result==null || result=='') {
                 //res.send('0');
                 result='0';
-                console.log('0 found' );
+                // console.log('0 found' );
             } else {
                 //res.send(result);
-                console.log('1 entry found' );
+                // console.log('1 entry found' );
             }
             if (res===null)
                 return result;
@@ -64,10 +64,10 @@ async function UpdateOneProduct(req, res, next) {
         if (updates.LKey+''!='') {
             const result = await allProducts.findOneAndUpdate({LKey:updates.LKey} , updates , {new:true} )
             if (result==null) {
-                console.log('nothing updated');
+                // console.log('nothing updated');
             } else {
                 res.send(result);
-                console.log('1 entry updated' );
+                // console.log('1 entry updated' );
             }
         }
     } catch (error) {
@@ -84,10 +84,10 @@ async function UpdateOnlyFactoryConstants(req, res, next) {
             const result = await allProducts.findOneAndUpdate({LKey:updates.LKey} , updates , {new:true} )
             if (result==null) {
                 res.send('0');
-                console.log('nothing updated');
+                // console.log('nothing updated');
             } else {
                 res.send('1');
-                console.log('entry updated');
+                // console.log('entry updated');
             }
         }
     } catch (error) {
@@ -104,12 +104,12 @@ async function AddNewProduct(req, res, next) {
         if (lkeyfound==null || '') {
             addNewProduct = true;
         } else {
-            console.log('LKey is already created, pls retry again');
+            // console.log('LKey is already created, pls retry again');
             addNewProduct = false;
         }
         if (req.body.LKey!=null) {
             addNewProduct = false;
-            console.log('LKey is not required');
+            // console.log('LKey is not required');
             return null;
         };
         var vd = new Date(req.body.validUpto);
@@ -144,10 +144,10 @@ async function AddNewProduct(req, res, next) {
 
                 const result = await newProduct.save();
                 if (result===null) {
-                    console.log('nothing added');
+                    // console.log('nothing added');
                     res.send('0');
                 } else {
-                    console.log('one added');
+                    // console.log('one added');
                     // res.send(result + "\nadded as new");
                     res.send({'LKey':newLKey});
                 }
@@ -176,10 +176,10 @@ async function ModifyKeyDetails(req, res, next) {
             const result = await allProducts.findOneAndUpdate({LKey:updates.LKey} , updates , {new:true} )
             if (result==null) {
                 res.send('0');
-                console.log('nothing updated');
+                // console.log('nothing updated');
             } else {
                 res.send('1');
-                console.log('entry updated' );
+                // console.log('entry updated' );
             }
         }
     } catch (error) {
@@ -408,10 +408,10 @@ router.delete('/:id' , async(req,res,next) => {
         const id=req.params.id;
         const result = await  allProducts.findByIdAndDelete(id);
         if (result==null || '') {
-            console.log ('Product NOT FOUND ?');
+            // console.log ('Product NOT FOUND ?');
         } else { 
             res.send(result);
-            console.log ('Product Deleted !');
+            // console.log ('Product Deleted !');
         }
     } catch (error) {
         console.log(error.message);
