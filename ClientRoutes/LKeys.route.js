@@ -104,10 +104,13 @@ router.post('/gcd', async (req, res, next ) => {
     return rs1;
 });
 
+//called from android app GetLKey during activation process
 router.post('/rofk' , (req,res) => { RequestOtpForKey(req, res) } );
 
+//called from astrooffice app (after android app) to complete the step of getting key after otp verification during activation process
 router.post('/vogk' , (req,res) => { VerifyOtpSendKey(req, res) } );
 
+//called from astrooffice app to checklkvalidity
 router.post('/gofvk' , (req,res) => { GetOtpForValidKey(req, res) } );
 
 async function VerifyOtpSendKey (req, res) {
@@ -121,7 +124,7 @@ async function VerifyOtpSendKey (req, res) {
             resSend='0';
         } else {
             resSend = '-1';
-            if (result.ClMobile===req.body.ClMobile) {
+            if (result.ClMobile===req.body.ClMobile || (result.ClMobile==='' || result.ClMobile===null)) {  //case if mobile is null 
                 if (result.appName===req.body.appName) {
                     if (result.intpro===req.body.intpro) {
                         resSend = result.LKey;
@@ -286,13 +289,13 @@ async function GetOtpForValidKey(req, res) {
         var seconds = Math.floor(d.getTime() / 1);      //Math.round was giving the 30-40 secs difference dny
         //ref : https://stackoverflow.com/questions/25250551/node-js-how-to-generate-timestamp-unix-epoch-format
         if (Math.abs(seconds-parseFloat(inputs.ac) ) > 2000 ) { //2 secs diff only
-            // console.log (seconds + ' = ' + inputs.ac + ' = ' + (seconds - parseFloat(inputs.ac)));
+            console.log (seconds + ' = ' + inputs.ac + ' = ' + (seconds - parseFloat(inputs.ac)));
             // console.log (seconds - parseFloat(inputs.ac));
             res.send('1');
             return;    
         }
         
-        console.log (seconds + ' = ' + inputs.ac + ' = ' + (seconds - parseFloat(inputs.ac)));
+        // console.log (seconds + ' = ' + inputs.ac + ' = ' + (seconds - parseFloat(inputs.ac)));
         
         SetExpOTPForServer(inputs.ac);
         var lkdata = ''; //exo + CurrKeyDetails.LKey.substr(0,2).toLowerCase() + CurrKeyDetails.LKey.substr(CurrKeyDetails.LKey.length-2).toLowerCase(); 
