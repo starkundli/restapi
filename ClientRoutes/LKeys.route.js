@@ -1,8 +1,23 @@
 const express = require('express');
 const allKeys = require('../models/Product.model.js');
 const admin = require("../AdminRoutes/Products.route.js");
+// const multer = require('multer');
+
+// const storage = multer.diskStorage( {
+//     destination: (req, file, cb)=> {
+//         cb(null, 'mastersuploads/');
+//     },
+//     filename: (req, file, cb) => {
+//         cb(null, '123-' + file.originalname);
+//     }
+// })
+
+// const backupMaster = multer(storage);
+
 // require("../features.js")();
+
 const router = new express.Router();
+
 var CurrLKey = null;
 var CurrKeyDetails = null;
 var CLKisValid = false;
@@ -16,19 +31,32 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
+// app.use(express.json({
+//     type: "*/*"
+// }));
+
+
 
 router.use("/", async (req, res, next) => {
+    
     CurrLKey = req.body.LKey+'';
     
+    console.log('root route');
+    
+    console.log('currlkey=' + CurrLKey);
+
     if (req.body.LKey===undefined) {
         if (req.body.otp!=undefined) {
             next();
             return;
         } else {
             // console.log((req.body.LKey + ' = ' + CurrLKey));
-            return null;
+            // next();
+            return null ;
         }
+        
     }
+
     // next();
     //res.send(req.body + '');
     
@@ -46,7 +74,7 @@ router.use("/", async (req, res, next) => {
                 CLKisValid=true;
             }
             if (CLKisValid) {
-                // console.log('hello from main all handler' );
+                console.log('hello from main all handler' );
                 // res.send(result);
                 CurrKeyDetails = result;
                 next();
@@ -63,6 +91,22 @@ router.use("/", async (req, res, next) => {
     }
     
 });
+
+
+// router.post('/backupmasters' , backupMaster.none() , (req, res) => {  
+//     try {
+//         // backupMaster.single('file');
+//         console.log(req.body);
+//         console.log(req.body.file);
+//         console.log(req.LKey);
+//         res.send('ok');
+//         console.log('inside backupmasters route');
+//         return '1';
+//     } catch (error) {
+//         console.log(error.message);
+//     }
+// });
+
 
 async function VerifyCurrentKey(updates) {
     
@@ -448,5 +492,188 @@ function SetExpOTPForServer(ac) {
 function isEven(n) {
     return (n % 2 === 0);
 }
-module.exports = router;
 
+async function IsLicenseServerBased_NR (forLKey) {    
+    if (forLKey!=null && forLKey!='') {
+        const result = await allKeys.findOne({ LKey : { $regex: new RegExp(forLKey,'i')  } })    //ignoring case not spaces        
+        if (result!=null && result!='') {
+            return !result.optedForDongle;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+};
+
+async function IsKeyValidByDate_NR (forLKey) {    
+    //console.log('forlkey='+forLKey+'');
+    if (forLKey!=null && forLKey!='') {
+        const result = await allKeys.findOne({ LKey : { $regex: new RegExp(forLKey,'i')  } })    //ignoring case not spaces        
+        //console.log('result='+result);
+        if (result!=null && result!='') {
+            var vd = new Date(result.validUpto);
+            var cd = new Date();
+            if (vd<cd) {
+                // console.log('key expired');
+                //res.send('0');
+                return "0";//false;
+            } else {
+                return true;
+            }
+        } else {
+            // console.log('key not found = ' + req.body.LKey);
+            //res.send('1');
+            return false;
+        }
+    } else {
+        // console.log('invalid key');
+        //res.send('2');
+        return "-2";//false;
+    }
+};
+
+async function IsBackupValidByDate_NR (forLKey) {    
+    //console.log('forlkey='+forLKey+'');
+    if (forLKey!=null && forLKey!='') {
+        const result = await allKeys.findOne({ LKey : { $regex: new RegExp(forLKey,'i')  } })    //ignoring case not spaces        
+        //console.log('result='+result);
+        if (result!=null && result!='') {
+            if (result.backupUpto===null) {
+                return false;
+            } else {
+                var vd = new Date(result.backupUpto);
+                var cd = new Date();
+                if (vd<cd) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        } else {
+            // console.log('key not found = ' + req.body.LKey);
+            //res.send('1');
+            return false;
+        }
+    } else {
+        // console.log('invalid key');
+        //res.send('2');
+        return "-2";//false;
+    }
+};
+
+async function Check3BackupValidities_NR (forLKey, vals) {    
+    
+    vals.licserverbased = false;
+    vals.lkeyvalidbydate = false;
+    vals.backupvalidbydate = false;
+    if (forLKey!=null && forLKey!='') {
+        const result = await allKeys.findOne({ LKey : { $regex: new RegExp(forLKey,'i')  } })    //ignoring case not spaces        
+        
+        if (result!=null && result!='') {
+            vals.licserverbased = !result.optedForDongle;
+            var cd = new Date();
+            var vd = new Date(result.validUpto);
+            if (vd<cd) {
+                vals.lkeyvalidbydate = false;
+            } else {
+                vals.lkeyvalidbydate = true;
+            }
+
+            if (result.backupUpto===null) {
+                vals.backupvalidbydate = false;
+            } else {
+                var vd = new Date(result.backupUpto);
+                if (vd<cd) {
+                    vals.backupvalidbydate = false;
+                } else {
+                    vals.backupvalidbydate = true;
+                }
+            }
+        } else {
+            // console.log('key not found = ' + req.body.LKey);
+            //res.send('1');
+            //return false;
+        }
+    } else {
+        // console.log('invalid key');
+        //res.send('2');
+        //return "-2";//false;
+    }
+    return true;
+};
+
+
+async function Check3BackupValidities (forLKey) {    
+    // console.log('key not found = ' + forLKey);
+    var licserverbased = false;
+    var lkeyvalidbydate = false;
+    var backupvalidbydate = false;
+    if (forLKey!=null && forLKey!='') {
+        const result = await allKeys.findOne({ LKey : { $regex: new RegExp(forLKey,'i')  } })    //ignoring case not spaces        
+        
+        if (result!=null && result!='') {
+            licserverbased = !result.optedForDongle;
+            var cd = new Date();
+            var vd = new Date(result.validUpto);
+            if (vd<cd) {
+                lkeyvalidbydate = false;
+            } else {
+                lkeyvalidbydate = true;
+            }
+
+            if (result.backupUpto===null) {
+                backupvalidbydate = false;
+            } else {
+                var vd = new Date(result.backupUpto);
+                if (vd<cd) {
+                    backupvalidbydate = false;
+                } else {
+                    backupvalidbydate = true;
+                }
+            }
+        } else {
+            // console.log('key not found = ' + req.body.LKey);
+            //res.send('1');
+            return false;
+        }
+    } else {
+        // console.log('invalid key');
+        //res.send('2');
+        //return "-2";//false;
+    }
+    return {licserverbased, lkeyvalidbydate , backupvalidbydate};
+};
+
+async function ModifyBackupInfo(forLKey, bi) {
+    try {
+        const updates = {
+            "LKey":forLKey,
+            "backupInfo":bi
+        };   //updating only backupInfo
+        if (updates.LKey+''!='') {
+            const result = await allKeys.findOneAndUpdate({LKey:updates.LKey} , updates , {new:true} )
+            if (result==null) {
+                console.log('backupinfo NOT updated');
+                return false;
+            } else {
+                console.log('backupinfo updated' );
+                return true;
+            }
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+// module.exports = router;
+module.exports = { 
+    router,
+    // IsLicenseServerBased,
+    // IsKeyValidByDate,
+    // IsBackupValidByDate,
+    Check3BackupValidities,
+    ModifyBackupInfo
+}
+
+// //return router;

@@ -170,7 +170,8 @@ async function ModifyKeyDetails(req, res, next) {
             "LKey":req.body.LKey,
             "appGroup":req.body.appGroup,
             "appName":req.body.appName,
-            "validUpto":req.body.validUpto
+            "validUpto":req.body.validUpto,
+            "backupUpto":req.body.backupUpto
         };   //updating only appname appseries and vu  no matter whatever extra is passed
         if (updates.LKey+''!='') {
             const result = await allProducts.findOneAndUpdate({LKey:updates.LKey} , updates , {new:true} )

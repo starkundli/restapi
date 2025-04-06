@@ -6,15 +6,15 @@ GET https://restapi-722316705274.us-central1.run.app/products/gap
 
 
 ###
-PATCH http://localhost:5000/products/uop
+PATCH http://localhost:1974/products/uop
 Content-Type: application/json
 
 {
-    "LKey":"jypIgyhvnxyL1HtVwmV4",
+    "LKey":"",
     "appCode":"456",
-    "ClientName":"Umesh",
-    "validUpto": "2023-01-30",
-    "appName": "Expired"
+    "backupUpto": "2025-04-24"
+    // {'downloadlink':'' , 'clientCount':'10' , 'astroCount':'1' , 'lastBackupDT':'04/04/2025 10:00:00' }
+    
 }
 
 
@@ -87,7 +87,7 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:5000/client/gcd
+GET http://localhost:1974/client/gcd
 Content-Type: application/json; charset=utf-8
 
 {
@@ -126,21 +126,21 @@ Content-Type: application/json
 
 
 ### POST  https://restapi-722316705274.us-central1.run.app/products/anp
-PATCH  http://localhost:1974/client/mkd
+PATCH  http://localhost:1974/products/mkd
 Content-Type: application/json
 
 {
-    "LKey":"xdeXHoSNdZrEFYlGWMrv",
+    "LKey":"fMFJyHzKxkBw46IHWKC4",
     "appGroup":"2030",
     "appName":"Astro-Office - 2030",
-    "validUpto":"04/30/2025"
-
+    "validUpto":"04/30/2025",
+    "backupUpto": "04/30/2025"
 }
 
 ###
 # POST http://localhost:1974/client/gcd
-POST https://restapi-722316705274.us-central1.run.app/client/gcd
-# POST http://localhost:1974/client/gcd
+# POST https://restapi-722316705274.us-central1.run.app/client/gcd
+POST http://localhost:1974/client/gcd
 Content-Type: application/json
 
 {
@@ -217,4 +217,26 @@ Content-Type: application/json
     "ClMobile": "k",
     "ac" : "1740309019937"
             
+}
+
+
+###
+POST http://localhost:1974/client/backupmasters
+Content-Type: multipart/form-data
+
+{
+    "LKey":"fMFJyHzKxkBw46IHWKC4",
+    "file":"c:tempzzz.jpg"
+}
+
+###
+
+POST /backup/getInfo HTTP/1.1
+Host: pollution-monitor.com:8040
+Content-Type: application/json
+Content-Length: 59
+
+{
+    "lk":"jzRLXfWPoJyAI5upu4Sb",
+    "infoVal":"1"
 }

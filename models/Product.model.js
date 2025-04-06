@@ -22,7 +22,10 @@ const productSchema = new Schema ({
     actTS: {type: Date, required: false},
     lastCommTS: {type: Date, required: false},
     reqlkdata: {type: String, required: false}, // storing otp and ts sent to client to verify received otp from client and check both ts diff (10secs) before sending , while lkey request from client
-                          
+    backupUpto: {type : Date, required: false, default:null }, 
+    optedForDongle: {type: Boolean, required: false, default: false},
+    backupInfo: { type: Object, required: false },  //json for : downloadlink, clientCount, astroCount, lastBackupDate
+
 })
 const product = mongoose.model('product', productSchema )
 module.exports = product;

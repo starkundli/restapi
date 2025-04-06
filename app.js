@@ -13,13 +13,18 @@ app.use(express.urlencoded({extended:true}));
 //initialise db
 require('./initdb.js')();
  
-const ProductRoute = require('./AdminRoutes/Products.route');
+const ProductRoute = require('./AdminRoutes/Products.route.js');
 // app.use('/products', ProductRoute);
 app.use('/products', ProductRoute.router);
 
 
 const LKeyRoute = require('./ClientRoutes/LKeys.route.js');
-app.use('/client', LKeyRoute);
+//app.use('/client', LKeyRoute);      //if u are only exporting router(at end of file) in lkeys.route.js use this statement
+app.use('/client', LKeyRoute.router);    //if u are exporting json object with router and other function in lkeys.route.js use this statement
+
+
+const backupRoute = require('./BackupRoutes/Backup.route.js');
+app.use('/backup', backupRoute);
 
 app.use((req, res, next) => {
     const err = new Error("Not found")
