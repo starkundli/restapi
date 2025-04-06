@@ -41,9 +41,9 @@ router.use("/", async (req, res, next) => {
     
     CurrLKey = req.body.LKey+'';
     
-    console.log('root route');
+    // console.log('root route');
     
-    console.log('currlkey=' + CurrLKey);
+    // console.log('currlkey=' + CurrLKey);
 
     if (req.body.LKey===undefined) {
         if (req.body.otp!=undefined) {
@@ -74,7 +74,7 @@ router.use("/", async (req, res, next) => {
                 CLKisValid=true;
             }
             if (CLKisValid) {
-                console.log('hello from main all handler' );
+                // console.log('hello from main all handler' );
                 // res.send(result);
                 CurrKeyDetails = result;
                 next();
