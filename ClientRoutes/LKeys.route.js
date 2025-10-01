@@ -165,7 +165,7 @@ exo : all ok
             if (licenseActivated)  {
                 //update in act transactions
                 //update curr record values for firstActDate and/or lastactdate, totalActCount
-                console.log('lic activated ...');
+                console.log('lic activated after 2 updates ...');
             };
         } else {
             res.send('4');
