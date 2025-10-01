@@ -1,4 +1,4 @@
-node_modules/
-/rest.http
-/allAPIs.txt
-/.env
+node_modules
+rest.http
+allAPIs.txt
+.env

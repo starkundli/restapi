@@ -12,7 +12,10 @@ app.use(express.urlencoded({extended:true}));
 
 //initialise db
 require('./initdb.js')();
- 
+// note in future shift the entire product/admin endpoints to some other nodejs server/app
+// so that client routes will be free from atleast this much amount of load processing,
+// although mongodb will still cater to two nodejs apps but later that also can be
+// streamlined like main DB for clients and backed up db for admin/product routes or whatever
 const ProductRoute = require('./AdminRoutes/Products.route.js');
 // app.use('/products', ProductRoute);
 app.use('/products', ProductRoute.router);
@@ -23,8 +26,11 @@ const LKeyRoute = require('./ClientRoutes/LKeys.route.js');
 app.use('/client', LKeyRoute.router);    //if u are exporting json object with router and other function in lkeys.route.js use this statement
 
 
-const backupRoute = require('./BackupRoutes/Backup.route.js');
-app.use('/backup', backupRoute);
+const serverBackupRoute = require('./BackupRoutes/ServerBackup.route.js');
+app.use('/serverbackup', serverBackupRoute);
+
+const cloudBackupRoute = require('./BackupRoutes/CloudBackup.route.js');
+app.use('/cloudbackup', cloudBackupRoute);
 
 app.use((req, res, next) => {
     const err = new Error("Not found")

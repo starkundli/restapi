@@ -1,6 +1,23 @@
 
 GET http://localhost:1974/products/gap
 
+
+###
+POST http://localhost:1974/client/gcd
+Content-Type: application/json
+
+{
+    "LKey":"fMFJyHzKxkBw46IHWKC4"
+}
+
+###
+POST http://localhost:1974/products/gop
+Content-Type: application/json
+
+{
+    "LKey":"fMFJyHzKxkBw46IHWKC4"
+}
+
 ###
 GET https://restapi-722316705274.us-central1.run.app/products/gap
 
@@ -87,11 +104,15 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:1974/client/gcd
+# post https://restapi-722316705274.us-central1.run.app/client/gcd
+POST http://localhost:1974/client/gcd
 Content-Type: application/json; charset=utf-8
 
 {
-    "LKey":"2wO7bY5rNYhsTw2JjDMu" 
+    "LKey": "fMFJyHzKxkBw46IHWKC4"
+       
+    # "fMFJyHzKxkBw46IHWKC4" 
+    # YPyyA3KocxLItViIE08x
 }
 
 ###

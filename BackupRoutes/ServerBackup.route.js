@@ -102,7 +102,7 @@ router.post("/masters", upload, (req, res) => {
     if (fileWillBeUploaded==true) {
         //bi.downloadlink = bi.downloadlink + ' = ' + fileDownloadLink;
         //const newbidownloadlink = bi.downloadlink + ' = ' + fileDownloadLink;
-        console.log('new bi=' + JSON.stringify(biObj, null, 4));
+        // console.log('new bi=' + JSON.stringify(biObj, null, 4));
         //console.log('newbidownloadlink = ' + newbidownloadlink );
         client.ModifyBackupInfo (req.body.LKey, biObj);
     }

@@ -22,8 +22,42 @@ router.post('/anp', (req, res, next ) => {AddNewProduct(req, res, next);});
 router.patch('/mkd' , (req,res,next) => { ModifyKeyDetails(req, res, next)} );
 
 async function GetAllProducts(req, res, next) {
+
+//if any change in model/schema, the already saved records/collection are not affected, hence 
+//foll call is made as per the requirement and when work is done remm them again
+//set will add the field with data, unset will delete it, but if inside a json object then
+//entire object gets deleted(warning), rename should be done before actually modifying the schema
+
+    // await allProducts.updateMany({}, {$set: {backupInfo:{clientCount: "-"}}}, {upsert: true})
+
+    // await allProducts.updateMany({}, {$rename: {backupInfo:{lastBackupDate : "lastBackupDT"}}}, {strict: false})
+
+    // await allProducts.updateMany({}, {$unset: {backupInfo:{lastBackupDate:"-"}}} );
+
+    var projection = { 
+        LKey: 1, 
+        appGroup: 1, 
+        appName: 1, 
+        createdON: 1, 
+        validUpto: 1, 
+        ClName: 1, 
+        ClMobile: 1, 
+        ClEmail: 1, 
+        ClCity: 1, 
+        backupUpto: 1, 
+        firstActDT: 1,
+        lastActDT: 1,
+        totalActCount: 1,
+        lastCommDT: 1, 
+        optedForDongle: 1, 
+        noActOnDiffDev: 1, 
+        noFurtherAct: 1, 
+        _id: 0 
+    };
+
     try {
-        const results = await allProducts.find( {}, {} );
+        //const results = await allProducts.find( {}, {} );
+        const results = await allProducts.find( {}, projection );
         res.send(results);
         // console.log(results.length + ' entries found' );
     } catch (error) {
@@ -33,16 +67,25 @@ async function GetAllProducts(req, res, next) {
 
 async function GetOneProduct(req, res, next) {
     try {
+        // console.log(req.body.LKey + ' = lkey' );
         if (req.body.LKey+''!='') {
             //const result = await allProducts.find( { LKey: /^req.body.LKey$/i } )
             // const result = await allProducts.find({ LKey : { $regex: /req.body.LKey/i } })
             // const result = await allProducts.findOne( { LKey: req.body.LKey } )
-            const result = await allProducts.findOne({ LKey : { $regex: new RegExp(req.body.LKey,'i')  } })    //ignoring case not spaces
-            //courtesy : https://www.geeksforgeeks.org/mongodb-query-with-case-insensitive-search/
+            
+            //var result = await allProducts.findOne({ LKey : { $regex: new RegExp(req.body.LKey,'i')  } })    //ignoring case not spaces
+            var result = await allProducts.findOne({ LKey : { $regex: new RegExp("^"+req.body.LKey+"$",'i')  } })    //ignoring case not spaces
+            //// courtesy : https://www.geeksforgeeks.org/mongodb-query-with-case-insensitive-search/
+            
+            // const result = await allProducts.findOne({ LKey : { $regex: new RegExp(req.body.LKey,'i')  } }, {explicit:true}  )    //ignoring case not spaces
+            // var result = await allProducts.findOne({ LKey : /^req.body.LKey$/i } )    //ignoring case not spaces
+            
+            // console.log(result + ' = 0 found' );
+
             if (result==null || result=='') {
                 //res.send('0');
                 result='0';
-                // console.log('0 found' );
+                
             } else {
                 //res.send(result);
                 // console.log('1 entry found' );
