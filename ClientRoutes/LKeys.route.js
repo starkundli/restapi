@@ -150,7 +150,7 @@ exo : all ok
                 if (doc.deviceDetails===currTran.deviceDetails) {
                     deviceIsNEW = false;
                     currTran.tranCount = doc.tranCount + 1;
-                    break;
+                    // break;
                 }
             }
         }

@@ -29,8 +29,8 @@ app.use('/client', LKeyRoute.router);    //if u are exporting json object with r
 const serverBackupRoute = require('./BackupRoutes/ServerBackup.route.js');
 app.use('/serverbackup', serverBackupRoute);
 
-const cloudBackupRoute = require('./BackupRoutes/CloudBackup.route.js');
-app.use('/cloudbackup', cloudBackupRoute);
+// const cloudBackupRoute = require('./BackupRoutes/CloudBackup.route.js');
+// app.use('/cloudbackup', cloudBackupRoute);
 
 app.use((req, res, next) => {
     const err = new Error("Not found")
