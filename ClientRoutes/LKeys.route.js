@@ -98,7 +98,6 @@ async function VerifyCurrentKey(inputs) {
 }
 
 var deviceIsNEW = true;
-var deviceIsNEW = true;
 router.patch('/anl' , async (req,res) => {        //,next
 /* sending to response
 exo : all ok
@@ -211,10 +210,6 @@ async function ActivateNewLicense(req, res) {
             if(deviceIsNEW) updates.totalDevCount = updates.totalDevCount + 1;
             if (updates.totalDevCount==0) updates.totalDevCount = 1;
             
-            updates.totalDevCount = CurrKeyDetailsDB.totalDevCount;
-            if (deviceIsNEW) updates.totalDevCount = updates.totalDevCount + 1 ;
-            if (updates.totalDevCount == 0) updates.totalDevCount = 1;
-
             // const updates = {
             //  "LKey":CurrLKey,
             //  "actInfo":aiObj
