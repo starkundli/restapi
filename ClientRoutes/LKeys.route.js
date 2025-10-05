@@ -97,6 +97,7 @@ async function VerifyCurrentKey(inputs) {
     
 }
 
+var deviceIsNEW = true;
 router.patch('/anl' , async (req,res) => {        //,next
 /* sending to response
 exo : all ok
@@ -107,10 +108,9 @@ exo : all ok
 3   : key not verifying as per whichsoft/mobile/body
 4   : noFurtherAct or noActOnDiffDev either is true 
 5   : otp is proper but lkey entry not updated
-6   : otp is proper but actinfo entry not updated
-7   : otp is proper but tran entry not updated
-8   : exp otp not proper , nothing updated, pls retry
-9   : try catch error
+6   : otp is proper but tran entry not updated
+7   : exp otp not proper , nothing updated, pls retry
+8   : try catch error
 */
 
     if (CLKisValid) {
@@ -143,7 +143,6 @@ exo : all ok
         const lktrans = await allTrans.find({ LKey : { $regex: new RegExp("^"+CurrLKey+"$",'i')  } })    //ignoring case but exact match
         if (lktrans!=null && lktrans!='') {
             // console.log("Found documents:");
-            var deviceIsNEW = true;
             for await (const doc of lktrans) {
                 // console.log(doc);
                 LKTotalActCount = LKTotalActCount + doc.tranCount;
@@ -206,6 +205,10 @@ async function ActivateNewLicense(req, res) {
             }
             updates.totalActCount = LKTotalActCount + 1;
             
+            updates.totalDevCount = CurrKeyDetailsDB.totalDevCount;
+            if (deviceIsNEW) updates.totalDevCount = updates.totalDevCount + 1 ;
+            if (updates.totalDevCount == 0) updates.totalDevCount = 1;
+            
             // const updates = {
             //  "LKey":CurrLKey,
             //  "actInfo":aiObj
@@ -215,7 +218,12 @@ async function ActivateNewLicense(req, res) {
             const result1 = await allKeys.findOneAndUpdate({ LKey : { $regex: new RegExp(CurrLKey,'i')  } } , updates , {new:true} );
             //const result2 = await allKeys.findOneAndUpdate({LKey:updates.LKey} , updates , {new:true} )
             //const result2 = await allKeys.findOneAndUpdate({LKey:updates.LKey} , updates , {new:true} )
-            const result2 = await allTrans.findOneAndUpdate({ LKey: currTran.LKey, deviceDetails: currTran.deviceDetails }, currTran, {upsert:true});
+            const result2 = await allTrans.findOneAndUpdate({ LKey: currTran.LKey, deviceDetails: currTran.deviceDetails }, currTran, 
+                {
+                    returnDocument: 'after', // Return the document after update/insert
+                    upsert: true // Create if not found
+                }
+            );
             
             if (result1==null) {
                 console.log('nothing updated in key record');

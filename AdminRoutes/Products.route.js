@@ -48,6 +48,7 @@ async function GetAllProducts(req, res, next) {
         firstActDT: 1,
         lastActDT: 1,
         totalActCount: 1,
+        totalDevCount: 1,
         lastCommDT: 1, 
         optedForDongle: 1, 
         noActOnDiffDev: 1, 

@@ -43,6 +43,7 @@ const productSchema = new Schema ({
     firstActDT: {type: Date, required: false},
     lastActDT: {type: Date, required: false},
     totalActCount: { type: Number, default: 0},
+    totalDevCount: { type: Number, default: 0}, //act on no. of devices/pcs after first purchase
 
     //selfDeregDT: {type: Date, required: false, default: null},
 
