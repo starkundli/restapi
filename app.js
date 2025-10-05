@@ -29,6 +29,10 @@ app.use('/client', LKeyRoute.router);    //if u are exporting json object with r
 const serverBackupRoute = require('./BackupRoutes/ServerBackup.route.js');
 app.use('/serverbackup', serverBackupRoute);
 
+// 02.10.2025 removing this route as we were shipping composite...json file directly to cloud and github which
+// google was objecting as policy violation and abuse issues (check mail in starkundli dated 01.10) . this file has private key info 
+// which is required for writing to cloud bucket storage hence this issue of api key info so when we get the alternative 
+// to hide this key then will implement this again with modifications
 // const cloudBackupRoute = require('./BackupRoutes/CloudBackup.route.js');
 // app.use('/cloudbackup', cloudBackupRoute);
 
