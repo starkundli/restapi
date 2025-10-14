@@ -25,6 +25,9 @@ const LKeyRoute = require('./ClientRoutes/LKeys.route.js');
 //app.use('/client', LKeyRoute);      //if u are only exporting router(at end of file) in lkeys.route.js use this statement
 app.use('/client', LKeyRoute.router);    //if u are exporting json object with router and other function in lkeys.route.js use this statement
 
+const TransactionRoute = require('./AdminRoutes/Transactions.route.js');
+app.use('/transactions', TransactionRoute.router);
+
 
 const serverBackupRoute = require('./BackupRoutes/ServerBackup.route.js');
 app.use('/serverbackup', serverBackupRoute);

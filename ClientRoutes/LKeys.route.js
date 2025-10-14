@@ -140,6 +140,7 @@ exo : all ok
         currTran.deviceDetails = req.body.deviceDetails;
         currTran.tranCount = 1;
 
+        deviceIsNEW = true;
         const lktrans = await allTrans.find({ LKey : { $regex: new RegExp("^"+CurrLKey+"$",'i')  } })    //ignoring case but exact match
         if (lktrans!=null && lktrans!='') {
             // console.log("Found documents:");
@@ -496,6 +497,8 @@ async function GetOtpForValidKey(req, res) {
         var seconds = Math.floor(d.getTime() / 1);      //Math.round was giving the 30-40 secs difference dny
         //ref : https://stackoverflow.com/questions/25250551/node-js-how-to-generate-timestamp-unix-epoch-format
         if (Math.abs(seconds-parseFloat(inputs.ac) ) > 2000 ) { //2 secs diff only
+            //either sync clients computer with net date and time or increase this diff or skip this altogether
+            //or any other alternative
             console.log (seconds + ' = ' + inputs.ac + ' = ' + (seconds - parseFloat(inputs.ac)));
             // console.log (seconds - parseFloat(inputs.ac));
             res.send('1');

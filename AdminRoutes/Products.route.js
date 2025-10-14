@@ -181,10 +181,18 @@ async function AddNewProduct(req, res, next) {
                 newProduct.consF = "";
                 newProduct.consU = "";
                 newProduct.intpro = "";
-                newProduct.actTS = "";
-                newProduct.lastCommTS = "";
+                //newProduct.actTS = "";
+                newProduct.lastCommDT = "";
                 var cd = new Date();
                 newProduct.createdON = cd;
+                newProduct.reqlkdata="";
+                newProduct.optedForDongle=false;
+                newProduct.noActOnDiffDev=false;
+                newProduct.noFurtherAct=false;
+                newProduct.firstActDT="";
+                newProduct.lastActDT="";
+                newProduct.totalActCount=0;
+                newProduct.totalDevCount=0;
 
                 const result = await newProduct.save();
                 if (result===null) {

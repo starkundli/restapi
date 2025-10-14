@@ -6,13 +6,11 @@ var router = new express.Router();
 
 //router.get('/gap', (req, res, next ) => {GetAllProducts(req, res, next);});
 
-router.post('/golkt', (req, res, next ) => {GetOneLKTrans(req, res, next);});
+// router.post('/golkt', (req, res, next ) => {GetOneLKTrans(req, res, next);});
 
 //router.post('/ant', (req, res, next ) => {AddNewProduct(req, res, next);});
 
 //router.patch('/mkd' , (req,res,next) => { ModifyKeyDetails(req, res, next)} );
-
-async function GetAllTrans(req, res, next) {
 
 //if any change in model/schema, the already saved records/collection are not affected, hence 
 //foll call is made as per the requirement and when work is done remm them again
@@ -20,18 +18,43 @@ async function GetAllTrans(req, res, next) {
 //entire object gets deleted(warning), rename should be done before actually modifying the schema
 
     // await allProducts.updateMany({}, {$set: {backupInfo:{clientCount: "-"}}}, {upsert: true})
-
     // await allProducts.updateMany({}, {$rename: {backupInfo:{lastBackupDate : "lastBackupDT"}}}, {strict: false})
-
     // await allProducts.updateMany({}, {$unset: {backupInfo:{lastBackupDate:"-"}}} );
 
-    try {
-        const results = await allTransactions.find( {}, {} );
-        res.send(results);
-        // console.log(results.length + ' entries found' );
-    } catch (error) {
-        console.log(error.message);
+router.post('/gatflk', (req, res, next ) => {GetAllTransForLK(req, res, next);});
+
+async function GetAllTransForLK(req, res, next) {
+
+    var projection = { 
+        //LKey: 0, 
+        tranDT: 1, 
+        tranType: 1, 
+        deviceDetails: 1, 
+        tranCount: 1, 
+        _id: 0 
+    };
+
+    if (req.body.LKey+''!='') {
+        try {
+            //const results = await allTransactions.find( {}, {} );
+            //const results = await allTransactions.find({ LKey : { $regex: new RegExp("^"+req.body.LKey+"$",'i')  } })    //ignoring case but exact match
+            const results = await allTransactions.find({ LKey : { $regex: new RegExp("^"+req.body.LKey+"$",'i')  } }, projection)    //ignoring case but exact match
+            if (results!=null && results!='') {
+                res.send(results);
+            } else {
+                res.send('0');
+            }
+            // console.log(results.length + ' entries found' );
+        } catch (error) {
+            res.send('error');
+            console.log(error.message);
+        }
+    } else {
+        res.send('-1');
+        console.log('no lkey');
     }
+
+
 }
 
 async function GetOneLKTrans(req, res, next) {
@@ -173,8 +196,8 @@ router.delete('/:id' , async(req,res,next) => {
 
 
 module.exports = { 
-    router,
-    GetOneLKTrans
+    router//,
+    // GetOneLKTrans
     // GOP2,
 }
 

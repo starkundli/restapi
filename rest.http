@@ -261,3 +261,11 @@ Content-Length: 59
     "lk":"jzRLXfWPoJyAI5upu4Sb",
     "infoVal":"1"
 }
+
+###
+POST http://localhost:1974/transactions/gatflk
+Content-Type: application/json
+
+{
+    "LKey":"fMFJyHzKxkBw46IHWKC4"
+}

@@ -8,7 +8,7 @@ const transactionSchema = new Schema ({
     LKey: {type : String, required: true} ,
     tranType: {type : String, required: true , default : '1'} ,
     deviceDetails: {type : String, required: true } ,   //sep by • i.e. alt+0149
-    tranCount: {type : Number, required: true} , 
+    tranCount: {type : String, required: true , default : '1'} ,
     
 })
 const transactions = mongoose.model('transactions', transactionSchema ); //this OR below line without s
