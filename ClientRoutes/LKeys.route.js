@@ -44,7 +44,7 @@ router.use("/", async (req, res, next) => {
         // const result = await allKeys.findOne({ LKey : { $regex: new RegExp(CurrLKey,'i')  } })    //ignoring case but matches pattern i.e somewhat match will also come in result        
         const result = await allKeys.findOne({ LKey : { $regex: new RegExp("^"+CurrLKey+"$",'i')  } })    //ignoring case but exact match
         if (result!=null && result!='') {
-            var vd = new Date(result.validUpto);
+            var vd = new Date(result.vudt);
             var cd = new Date();
             if (vd<cd) {
                 // console.log('key expired');
@@ -130,8 +130,8 @@ exo : all ok
             return null;
         }
 
-        noFurtherAct = CurrKeyDetailsDB.noFurtherAct;
-        noActOnDiffDev = CurrKeyDetailsDB.noActOnDiffDev;
+        noFurtherAct = CurrKeyDetailsDB.nfa;
+        noActOnDiffDev = CurrKeyDetailsDB.naodd;
 
         // currTran = JSON.parse(allTrans);
         currTran.tranDT = new Date();
@@ -178,38 +178,38 @@ async function ActivateNewLicense(req, res) {
     licenseActivated = false;
     try {
         const updates = req.body;
-        SetExpOTPForServer(req.body.actCode);
+        SetExpOTPForServer(req.body.actc);
         if (exo.length==4) {
             
-            updates.intpro = "";
-            updates.reqlkdata = "";
-            updates.lastCommDT = currTran.tranDT;
+            updates.inpr = "";
+            updates.rlkd = "";
+            updates.lcdt = currTran.tranDT;
        
             //note if no actinfo object is present in a record (as those records may been added 
             // before adding the definition of actinfo schema object) , then foll is the 
             // procedure to update those records
        
             // var aiObj = new Object();
-            // aiObj.lastActDT = currTran.tranDT;
+            // aiObj.ladt = currTran.tranDT;
             // if (CurrKeyDetailsDB.actInfo==null) {
-            //     aiObj.firstActDT = currTran.tranDT;
+            //     aiObj.fadt = currTran.tranDT;
             // } else {
-            //     if (CurrKeyDetailsDB.actInfo.firstActDT==null) {
-            //         aiObj.firstActDT = currTran.tranDT;
+            //     if (CurrKeyDetailsDB.actInfo.fadt==null) {
+            //         aiObj.fadt = currTran.tranDT;
             //     }
             // }
-            // aiObj.totalActCount = LKTotalActCount + 1;
+            // aiObj.tac = LKTotalActCount + 1;
 
-            updates.lastActDT = currTran.tranDT;
-            if (CurrKeyDetailsDB.firstActDT==null) {
-                updates.firstActDT = currTran.tranDT;
+            updates.ladt = currTran.tranDT;
+            if (CurrKeyDetailsDB.fadt==null) {
+                updates.fadt = currTran.tranDT;
             }
 
-            updates.totalActCount = LKTotalActCount + 1;
+            updates.tac = LKTotalActCount + 1;
             
-            updates.totalDevCount = CurrKeyDetailsDB.totalDevCount;
-            if(deviceIsNEW) updates.totalDevCount = updates.totalDevCount + 1;
-            if (updates.totalDevCount==0) updates.totalDevCount = 1;
+            updates.tdc = CurrKeyDetailsDB.tdc;
+            if(deviceIsNEW) updates.tdc = updates.tdc + 1;
+            if (updates.tdc==0) updates.tdc = 1;
             
             // const updates = {
             //  "LKey":CurrLKey,
@@ -274,8 +274,8 @@ async function ActivateNewLicense_NR(req, res, next) {
             res.send('3');
             return null;
         }
-        updates.intpro = "";
-        updates.reqlkdata = "";
+        updates.inpr = "";
+        updates.rlkd = "";
         updates.actTS = new Date();
         
         const result = await allKeys.findOneAndUpdate({ LKey : { $regex: new RegExp(CurrLKey,'i')  } } , updates , {new:true} )
@@ -283,7 +283,7 @@ async function ActivateNewLicense_NR(req, res, next) {
             console.log('nothing updated');
             res.send('4');
         } else {
-            SetExpOTPForServer(updates.actCode);
+            SetExpOTPForServer(updates.actc);
             if (exo.length==4) {
                 // res.send(result + '\nexo=' + exo);
                 res.send(exo+'');
@@ -325,7 +325,7 @@ async function VerifyOtpSendKey (req, res) {
     try {
         //if (CurrKeyDetailsDB===null) return;
         // console.log(req.body.otp+'');
-        const result = await allKeys.findOne({ reqlkdata : { $regex: new RegExp(req.body.otp,'i')  } })    //ignoring case not spaces
+        const result = await allKeys.findOne({ rlkd : { $regex: new RegExp(req.body.otp,'i')  } })    //ignoring case not spaces
         //console.log(result+'');
         var resSend = '';
         if (result===null || result==='') {
@@ -334,14 +334,14 @@ async function VerifyOtpSendKey (req, res) {
             resSend = '-1';
             if (result.ClMobile===req.body.ClMobile || (result.ClMobile==='' || result.ClMobile===null)) {  //case if mobile is null 
                 if (result.appName===req.body.appName) {
-                    if (result.intpro===req.body.intpro) {
+                    if (result.inpr===req.body.inpr) {
                         resSend = result.LKey;
                     }
                 }
             }
         }
         
-        // console.log( CurrKeyDetailsDB.reqlkdata + '\n' + loggedOTP + ' = ' + loggedTS) ;
+        // console.log( CurrKeyDetailsDB.rlkd + '\n' + loggedOTP + ' = ' + loggedTS) ;
         res.send({'lk':resSend});
         if (resSend==='0') {
             console.log('otp mismatch / expired / not requested');
@@ -363,11 +363,11 @@ async function VerifyOtpSendKey_NR (req, res) {
         if (CurrKeyDetailsDB===null) return;
         var loggedOTP = null;
         var loggedTS = null;
-        if (CurrKeyDetailsDB.reqlkdata != '') {
-            loggedOTP = CurrKeyDetailsDB.reqlkdata.split(',')[0];
-            loggedTS = CurrKeyDetailsDB.reqlkdata.split(',')[1];
+        if (CurrKeyDetailsDB.rlkd != '') {
+            loggedOTP = CurrKeyDetailsDB.rlkd.split(',')[0];
+            loggedTS = CurrKeyDetailsDB.rlkd.split(',')[1];
         }
-        // console.log( CurrKeyDetailsDB.reqlkdata + '\n' + loggedOTP + ' = ' + loggedTS) ;
+        // console.log( CurrKeyDetailsDB.rlkd + '\n' + loggedOTP + ' = ' + loggedTS) ;
         var resSend = CurrKeyDetailsDB.LKey;
 
         if (loggedOTP===null || loggedTS===null) {
@@ -406,7 +406,7 @@ async function VerifyOtpSendKey_NR (req, res) {
 
         /*
         const updates = {"LKey":req.body.LKey,
-            "reqlkdata":''};   //updating only reqlkdata , no matter whatever extra is passed
+            "rlkd":''};   //updating only reqlkdata , no matter whatever extra is passed
         const result = await allKeys.findOneAndUpdate({LKey:updates.LKey} , updates , {new:true} )
         if (result==null) {
             console.log('nothing updated');
@@ -421,8 +421,8 @@ async function VerifyOtpSendKey_NR (req, res) {
 
 async function ResetLKData (firstParam, secondParam) {
     // do something
-    const updates = {"LKey":firstParam, "intpro":'',
-        "reqlkdata":''};   //updating only intpro and reqlkdata , no matter whatever extra is passed
+    const updates = {"LKey":firstParam, "inpr":'',
+        "rlkd":''};   //updating only intpro and reqlkdata , no matter whatever extra is passed
     const result = await allKeys.findOneAndUpdate({LKey:updates.LKey} , updates , {new:true} )
     if (result===null) {
         console.log('nothing updated');
@@ -448,14 +448,14 @@ async function RequestOtpForKey(req, res) {
 
         var d = new Date();
         var seconds = Math.round(d.getTime() / 1);
-        // console.log(seconds + ' = ' + inputs.actCode);
+        // console.log(seconds + ' = ' + inputs.actc);
         SetExpOTPForServer((seconds+''));
         if (exo.length==4) {
             var now = new Date();
             //var lkdata = exo + "," + now ;
             var lkdata = exo + CurrKeyDetailsDB.LKey.substr(0,2).toLowerCase() + CurrKeyDetailsDB.LKey.substr(CurrKeyDetailsDB.LKey.length-2).toLowerCase(); 
-            const updates = {"LKey":req.body.LKey, "intpro":req.body.intpro,
-                "reqlkdata":lkdata};   //updating only intpro and reqlkdata , no matter whatever extra is passed
+            const updates = {"LKey":req.body.LKey, "inpr":req.body.inpr,
+                "rlkd":lkdata};   //updating only intpro and reqlkdata , no matter whatever extra is passed
             const result = await allKeys.findOneAndUpdate({LKey:updates.LKey} , updates , {new:true} )
             if (result==null) {
                 res.send('0');
@@ -496,18 +496,18 @@ async function GetOtpForValidKey(req, res) {
         var d = new Date();
         var seconds = Math.floor(d.getTime() / 1);      //Math.round was giving the 30-40 secs difference dny
         //ref : https://stackoverflow.com/questions/25250551/node-js-how-to-generate-timestamp-unix-epoch-format
-        if (Math.abs(seconds-parseFloat(inputs.ac) ) > 2000 ) { //2 secs diff only
+        if (Math.abs(seconds-parseFloat(inputs.actc) ) > 2000 ) { //2 secs diff only
             //either sync clients computer with net date and time or increase this diff or skip this altogether
             //or any other alternative
-            console.log (seconds + ' = ' + inputs.ac + ' = ' + (seconds - parseFloat(inputs.ac)));
-            // console.log (seconds - parseFloat(inputs.ac));
+            console.log (seconds + ' = ' + inputs.actc + ' = ' + (seconds - parseFloat(inputs.actc)));
+            // console.log (seconds - parseFloat(inputs.actc));
             res.send('1');
             return;    
         }
         
-        // console.log (seconds + ' = ' + inputs.ac + ' = ' + (seconds - parseFloat(inputs.ac)));
+        // console.log (seconds + ' = ' + inputs.actc + ' = ' + (seconds - parseFloat(inputs.actc)));
         
-        SetExpOTPForServer(inputs.ac);
+        SetExpOTPForServer(inputs.actc);
         var lkdata = ''; //exo + CurrKeyDetailsDB.LKey.substr(0,2).toLowerCase() + CurrKeyDetailsDB.LKey.substr(CurrKeyDetailsDB.LKey.length-2).toLowerCase(); 
         var char1,char2,char3,char4;
 
@@ -542,7 +542,7 @@ async function GetOtpForValidKey(req, res) {
 async function UpdateOnlyUserConstants(req, res, next) {
     try {
         const updates = {"LKey":req.body.LKey,
-            "consU":req.body.consU};   //updating only consU , no matter whatever extra is passed
+            "conu":req.body.conu};   //updating only consU , no matter whatever extra is passed
         if (updates.LKey+''!='') {
             const result = await allKeys.findOneAndUpdate({LKey:updates.LKey} , updates , {new:true} )
             if (result==null) {
@@ -564,7 +564,7 @@ async function ModifyKeyDetails(req, res, next) {
             "LKey":req.body.LKey,
             "appGroup":req.body.appGroup,
             "appName":req.body.appName,
-            "validUpto":req.body.validUpto
+            "vudt":req.body.vudt
         };   //updating only appname appseries and vu  no matter whatever extra is passed
         if (updates.LKey+''!='') {
             const result = await allKeys.findOneAndUpdate({LKey:updates.LKey} , updates , {new:true} )
@@ -630,7 +630,7 @@ async function IsLicenseServerBased_NR (forLKey) {
     if (forLKey!=null && forLKey!='') {
         const result = await allKeys.findOne({ LKey : { $regex: new RegExp(forLKey,'i')  } })    //ignoring case not spaces        
         if (result!=null && result!='') {
-            return !result.optedForDongle;
+            return !result.ofd;
         } else {
             return false;
         }
@@ -645,7 +645,7 @@ async function IsKeyValidByDate_NR (forLKey) {
         const result = await allKeys.findOne({ LKey : { $regex: new RegExp(forLKey,'i')  } })    //ignoring case not spaces        
         //console.log('result='+result);
         if (result!=null && result!='') {
-            var vd = new Date(result.validUpto);
+            var vd = new Date(result.vudt);
             var cd = new Date();
             if (vd<cd) {
                 // console.log('key expired');
@@ -672,10 +672,10 @@ async function IsBackupValidByDate_NR (forLKey) {
         const result = await allKeys.findOne({ LKey : { $regex: new RegExp(forLKey,'i')  } })    //ignoring case not spaces        
         //console.log('result='+result);
         if (result!=null && result!='') {
-            if (result.backupUpto===null) {
+            if (result.budt===null) {
                 return false;
             } else {
-                var vd = new Date(result.backupUpto);
+                var vd = new Date(result.budt);
                 var cd = new Date();
                 if (vd<cd) {
                     return false;
@@ -704,19 +704,19 @@ async function Check3BackupValidities_NR (forLKey, vals) {
         const result = await allKeys.findOne({ LKey : { $regex: new RegExp(forLKey,'i')  } })    //ignoring case not spaces        
         
         if (result!=null && result!='') {
-            vals.licserverbased = !result.optedForDongle;
+            vals.licserverbased = !result.ofd;
             var cd = new Date();
-            var vd = new Date(result.validUpto);
+            var vd = new Date(result.vudt);
             if (vd<cd) {
                 vals.lkeyvalidbydate = false;
             } else {
                 vals.lkeyvalidbydate = true;
             }
 
-            if (result.backupUpto===null) {
+            if (result.budt===null) {
                 vals.backupvalidbydate = false;
             } else {
-                var vd = new Date(result.backupUpto);
+                var vd = new Date(result.budt);
                 if (vd<cd) {
                     vals.backupvalidbydate = false;
                 } else {
@@ -747,19 +747,19 @@ async function Check3BackupValidities (forLKey) {
         // const result = await allKeys.findOne({ LKey : { $regex: new RegExp(forLKey,'i')  } })    //ignoring case not spaces        
         const result = await allKeys.findOne({ LKey : { $regex: new RegExp("^"+forLKey+"$",'i')  } })    //ignoring case not spaces
         if (result!=null && result!='') {
-            licserverbased = !result.optedForDongle;
+            licserverbased = !result.ofd;
             var cd = new Date();
-            var vd = new Date(result.validUpto);
+            var vd = new Date(result.vudt);
             if (vd<cd) {
                 lkeyvalidbydate = false;
             } else {
                 lkeyvalidbydate = true;
             }
 
-            if (result.backupUpto===null) {
+            if (result.budt===null) {
                 backupvalidbydate = false;
             } else {
-                var vd = new Date(result.backupUpto);
+                var vd = new Date(result.budt);
                 if (vd<cd) {
                     backupvalidbydate = false;
                 } else {
@@ -784,7 +784,7 @@ async function ModifyBackupInfo(forLKey, bi) {
     try {
         const updates = {
             "LKey":forLKey,
-            "backupInfo":bi
+            "binf":bi
         };   //updating only backupInfo
 
         // console.log('in MBI = ' + JSON.stringify(updates, null, 4));
@@ -802,7 +802,7 @@ async function ModifyBackupInfo(forLKey, bi) {
             }
 
             // Use the updateOne method to update the user's email
-            // allKeys.updateOne({ LKey: updates.LKey }, { $set: { backupInfo: bi } })
+            // allKeys.updateOne({ LKey: updates.LKey }, { $set: { binf: bi } })
             //   .then(result => {
             //     console.log('Update result:', result);
             //     if (result.nModified > 0) {

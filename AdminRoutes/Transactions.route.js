@@ -17,9 +17,9 @@ var router = new express.Router();
 //set will add the field with data, unset will delete it, but if inside a json object then
 //entire object gets deleted(warning), rename should be done before actually modifying the schema
 
-    // await allProducts.updateMany({}, {$set: {backupInfo:{clientCount: "-"}}}, {upsert: true})
-    // await allProducts.updateMany({}, {$rename: {backupInfo:{lastBackupDate : "lastBackupDT"}}}, {strict: false})
-    // await allProducts.updateMany({}, {$unset: {backupInfo:{lastBackupDate:"-"}}} );
+    // await allProducts.updateMany({}, {$set: {binf:{clientCount: "-"}}}, {upsert: true})
+    // await allProducts.updateMany({}, {$rename: {binf:{lastBackupDate : "lastBackupDT"}}}, {strict: false})
+    // await allProducts.updateMany({}, {$unset: {binf:{lastBackupDate:"-"}}} );
 
 router.post('/gatflk', (req, res, next ) => {GetAllTransForLK(req, res, next);});
 
@@ -127,7 +127,7 @@ async function AddNewTrans(req, res, next) {
             // console.log('LKey is not required');
             return null;
         };
-        var vd = new Date(req.body.validUpto);
+        var vd = new Date(req.body.vudt);
         var cd = new Date();
         // console.log(vd + '\n' + cd );
         if (vd<cd) {
@@ -140,22 +140,22 @@ async function AddNewTrans(req, res, next) {
             try {
                 const newProduct = new allProducts(req.body);
                 newProduct.LKey = newLKey;
-                newProduct.actCode = "";
+                newProduct.actc = "";
                 newProduct.ClName = "";
                 newProduct.ClMobile = "";
                 newProduct.ClEmail = "";
                 newProduct.ClCity = "";
-                newProduct.dev1 = "";
-                newProduct.dev2 = "";
-                newProduct.dev3 = "";
-                newProduct.dev4 = "";
-                newProduct.consF = "";
-                newProduct.consU = "";
-                newProduct.intpro = "";
+                newProduct.dv1 = "";
+                newProduct.dv2 = "";
+                newProduct.dv3 = "";
+                newProduct.dv4 = "";
+                newProduct.conf = "";
+                newProduct.conu = "";
+                newProduct.inpr = "";
                 newProduct.actTS = "";
                 newProduct.lastCommTS = "";
                 var cd = new Date();
-                newProduct.createdON = cd;
+                newProduct.crdt = cd;
 
                 const result = await newProduct.save();
                 if (result===null) {

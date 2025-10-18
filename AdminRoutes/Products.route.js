@@ -38,21 +38,21 @@ async function GetAllProducts(req, res, next) {
         LKey: 1, 
         appGroup: 1, 
         appName: 1, 
-        createdON: 1, 
-        validUpto: 1, 
+        crdt: 1, 
+        vudt: 1, 
         ClName: 1, 
         ClMobile: 1, 
         ClEmail: 1, 
         ClCity: 1, 
-        backupUpto: 1, 
-        firstActDT: 1,
-        lastActDT: 1,
-        totalActCount: 1,
-        totalDevCount: 1,
-        lastCommDT: 1, 
-        optedForDongle: 1, 
-        noActOnDiffDev: 1, 
-        noFurtherAct: 1, 
+        budt: 1, 
+        fadt: 1,
+        ladt: 1,
+        tac: 1,
+        tdc: 1,
+        lcdt: 1, 
+        ofd: 1, 
+        naodd: 1, 
+        nfa: 1, 
         _id: 0 
     };
 
@@ -122,7 +122,7 @@ async function UpdateOneProduct(req, res, next) {
 async function UpdateOnlyFactoryConstants(req, res, next) {
     try {
         const updates = {"LKey":req.body.LKey,
-            "consF":req.body.consF};   //updating only consF , no matter whatever extra is passed
+            "conf":req.body.conf};   //updating only consF , no matter whatever extra is passed
         
         if (updates.LKey+''!='') {
             const result = await allProducts.findOneAndUpdate({LKey:updates.LKey} , updates , {new:true} )
@@ -156,7 +156,7 @@ async function AddNewProduct(req, res, next) {
             // console.log('LKey is not required');
             return null;
         };
-        var vd = new Date(req.body.validUpto);
+        var vd = new Date(req.body.vudt);
         var cd = new Date();
         // console.log(vd + '\n' + cd );
         if (vd<cd) {
@@ -169,30 +169,29 @@ async function AddNewProduct(req, res, next) {
             try {
                 const newProduct = new allProducts(req.body);
                 newProduct.LKey = newLKey;
-                newProduct.actCode = "";
+                newProduct.actc = "";
                 newProduct.ClName = "";
                 newProduct.ClMobile = "";
                 newProduct.ClEmail = "";
                 newProduct.ClCity = "";
-                newProduct.dev1 = "";
-                newProduct.dev2 = "";
-                newProduct.dev3 = "";
-                newProduct.dev4 = "";
-                newProduct.consF = "";
-                newProduct.consU = "";
-                newProduct.intpro = "";
-                //newProduct.actTS = "";
-                newProduct.lastCommDT = "";
+                newProduct.dv1 = "";
+                newProduct.dv2 = "";
+                newProduct.dv3 = "";
+                newProduct.dv4 = "";
+                newProduct.conf = "";
+                newProduct.conu = "";
+                newProduct.inpr = "";
+                newProduct.lcdt = "";
                 var cd = new Date();
-                newProduct.createdON = cd;
-                newProduct.reqlkdata="";
-                newProduct.optedForDongle=false;
-                newProduct.noActOnDiffDev=false;
-                newProduct.noFurtherAct=false;
-                newProduct.firstActDT="";
-                newProduct.lastActDT="";
-                newProduct.totalActCount=0;
-                newProduct.totalDevCount=0;
+                newProduct.crdt = cd;
+                newProduct.rlkd="";
+                newProduct.ofd=false;
+                newProduct.naodd=false;
+                newProduct.nfa=false;
+                newProduct.fadt="";
+                newProduct.ladt="";
+                newProduct.tac=0;
+                newProduct.tdc=0;
 
                 const result = await newProduct.save();
                 if (result===null) {
@@ -222,8 +221,8 @@ async function ModifyKeyDetails(req, res, next) {
             "LKey":req.body.LKey,
             "appGroup":req.body.appGroup,
             "appName":req.body.appName,
-            "validUpto":req.body.validUpto,
-            "backupUpto":req.body.backupUpto
+            "vudt":req.body.vudt,
+            "budt":req.body.budt
         };   //updating only appname appseries and vu  no matter whatever extra is passed
         if (updates.LKey+''!='') {
             const result = await allProducts.findOneAndUpdate({LKey:updates.LKey} , updates , {new:true} )

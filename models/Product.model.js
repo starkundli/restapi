@@ -16,34 +16,32 @@ const productSchema = new Schema ({
     LKey: {type : String, required: false } ,
     appGroup: {type : String, required: true } ,
     appName: {type : String, required: true } ,
-    createdON: {type : Date, required: false } , 
-    validUpto: {type : Date, required: true } , 
-    actCode: {type : String, required: false } ,
+    crdt: {type : Date, required: false } ,        //createdON
+    vudt: {type : Date, required: true } ,          //validUpto
+    actc : {type : String, required: false } ,        //actCode
     ClName: {type: String, required: false},
     ClMobile: {type: String, required: false},
     ClEmail: {type: String, required: false},
     ClCity: {type: String, required: false},
-    dev1: {type: String, required: false},
-    dev2: {type: String, required: false},
-    dev3: {type: String, required: false},
-    dev4: {type: String, required: false},
-    consF: {type: String, required: false},
-    consU: {type: String, required: false},
-    intpro: {type: String, required: false},
-    //actTS: {type: Date, required: false},     //use actInfo.lastActDT
-    lastCommDT: {type: Date, required: false},  // lastCommTS
-    reqlkdata: {type: String, required: false}, // storing otp and ts sent to client to verify received otp from client and check both ts diff (10secs) before sending , while lkey request from client
-    backupUpto: {type : Date, required: false, default: null}, 
-    backupInfo: {type : backupInfoSchema, required: true},
-    //actInfo: {type : activationInfoSchema, required: true},
-    optedForDongle: {type: Boolean, required: false, default: false},
-    noActOnDiffDev: {type: Boolean, default: false},   //post first activation this will come into effect handled by ADMIN only
-    noFurtherAct: {type: Boolean, default: false},   //post first activation this will come into effect handled by ADMIN only
+    dv1 : {type: String, required: false},          //dev1
+    dv2 : {type: String, required: false},      //dev2
+    dv3 : {type: String, required: false},      //dev3
+    dv4 : {type: String, required: false},      //dev4
+    conf : {type: String, required: false},     //consF
+    conu : {type: String, required: false},     //consU
+    inpr : {type: String, required: false},     //intpro
+    lcdt : {type: Date, required: false},  // lastCommDT
+    rlkd : {type: String, required: false}, // reqlkdata = storing otp and ts sent to client to verify received otp from client and check both ts diff (10secs) before sending , while lkey request from client
+    budt : {type : Date, required: false, default: null},   //backupUpto
+    binf : {type : backupInfoSchema, required: false, default: null},       //backupInfo
+    ofd: {type: Boolean, required: false, default: false},  //optedForDongle
+    naodd : {type: Boolean, default: false},   //noActOnDiffDev = post first activation this will come into effect handled by ADMIN only
+    nfa : {type: Boolean, default: false},   //noFurtherAct = post first activation this will come into effect handled by ADMIN only
 
-    firstActDT: {type: Date, required: false},
-    lastActDT: {type: Date, required: false},
-    totalActCount: { type: Number, default: 0},
-    totalDevCount: { type: Number, default: 0}, //act on no. of devices/pcs after first purchase
+    fadt : {type: Date, required: false},           //firstActDT
+    ladt : {type: Date, required: false},           //lastActDT
+    tac : { type: Number, default: 0},              //totalActCount
+    tdc : { type: Number, default: 0},      //totalDevCount = act on no. of devices/pcs after first purchase
 
     //selfDeregDT: {type: Date, required: false, default: null},
 
@@ -53,9 +51,9 @@ module.exports = product;
 
 /*
 const activationInfoSchema = new Schema ({
-    firstActDT: {type: Date, required: false},
-    lastActDT: {type: Date, required: false},
-    totalActCount: { type: Number, default: "0"},
+    fadt: {type: Date, required: false},
+    ladt: {type: Date, required: false},
+    tac: { type: Number, default: "0"},
 
 });
 
