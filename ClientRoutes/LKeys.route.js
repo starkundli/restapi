@@ -146,10 +146,10 @@ exo : all ok
             // console.log("Found documents:");
             for await (const doc of lktrans) {
                 // console.log(doc);
-                LKTotalActCount = LKTotalActCount + doc.tranCount;
+                LKTotalActCount = LKTotalActCount + (+doc.tranCount);
                 if (doc.deviceDetails===currTran.deviceDetails) {
                     deviceIsNEW = false;
-                    currTran.tranCount = doc.tranCount + 1;
+                    currTran.tranCount = (+doc.tranCount) + 1;
                     // break;
                 }
             }
