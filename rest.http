@@ -1,6 +1,10 @@
 
 GET http://localhost:1974/products/gap
 
+###
+POST http://localhost:1974/products/goc
+
+
 
 ###
 POST http://localhost:1974/client/gcd

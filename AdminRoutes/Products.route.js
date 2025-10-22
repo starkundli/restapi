@@ -11,7 +11,8 @@ var router = new express.Router();
 
 router.get('/gap', (req, res, next ) => {GetAllProducts(req, res, next);});
 
-router.post('/gop', (req, res, next ) => {GetOneProduct(req, res, next);});
+//20.10.2025 no longer req as route GetOnProduct is exported to be used in lkeys.route
+// router.post('/gop', (req, res, next ) => {GetOneProduct(req, res, next);});
 
 //router.patch('/uop' , (req,res,next) => { UpdateOneProduct(req, res, next)});
 
@@ -20,6 +21,48 @@ router.patch('/uofc' , (req,res,next) => { UpdateOnlyFactoryConstants(req, res, 
 router.post('/anp', (req, res, next ) => {AddNewProduct(req, res, next);});
 
 router.patch('/mkd' , (req,res,next) => { ModifyKeyDetails(req, res, next)} );
+
+router.post('/goc', (req, res, next ) => {getOnlineCount(req, res, next)} );
+
+async function getOnlineCount (req, res, next)  { 
+    var minDiff = 60;       //def 1 hour
+    if (req.body.onlineByMins != null || req.body.onlineByMins != '') {
+        minDiff=Number(req.body.onlineByMins);
+    }
+    var totalRecords=0;
+    try {
+        //const results = await allProducts.find( {}, {} );
+        var totalRecords = await allProducts.countDocuments();
+        //res.send(results + ' entries found');
+        //console.log(results + ' entries found' );
+    } catch (error) {
+        console.log(error.message);
+    }
+
+    try {
+        // Get the current date as an ISODate object
+        const today = new Date();
+        const fromTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 
+                                today.getHours(), today.getMinutes() - minDiff);
+        const toTime = new Date(today.getFullYear(), today.getMonth(), today.getDate() , 
+                                today.getHours(), today.getMinutes());
+
+        // Count documents where 'creationDate' is within the current day
+        var onlineCount = await allProducts.countDocuments({
+            lcdt : {
+                $gte: fromTime,
+                $lt: toTime
+            }
+        });
+        //res.send(totalRecords + ' = total , ' + onlineCount + ' = online found');
+        res.send(onlineCount + '/' + totalRecords);
+        // console.log('from : ' + fromTime + '\nto : ' + toTime );
+    } catch (error) {
+        console.log(error.message);
+    }
+    
+    return null;
+} 
 
 async function GetAllProducts(req, res, next) {
 
@@ -75,13 +118,21 @@ async function GetOneProduct(req, res, next) {
             // const result = await allProducts.findOne( { LKey: req.body.LKey } )
             
             //var result = await allProducts.findOne({ LKey : { $regex: new RegExp(req.body.LKey,'i')  } })    //ignoring case not spaces
-            var result = await allProducts.findOne({ LKey : { $regex: new RegExp("^"+req.body.LKey+"$",'i')  } })    //ignoring case not spaces
+            //var result = await allProducts.findOne({ LKey : { $regex: new RegExp("^"+req.body.LKey+"$",'i')  } })    //ignoring case not spaces
             //// courtesy : https://www.geeksforgeeks.org/mongodb-query-with-case-insensitive-search/
             
             // const result = await allProducts.findOne({ LKey : { $regex: new RegExp(req.body.LKey,'i')  } }, {explicit:true}  )    //ignoring case not spaces
             // var result = await allProducts.findOne({ LKey : /^req.body.LKey$/i } )    //ignoring case not spaces
             
             // console.log(result + ' = 0 found' );
+
+
+            const updates = {
+                "lcdt":new Date(),
+            };   //updating only lcdt
+                
+            const result = await allProducts.findOneAndUpdate({ LKey : { $regex: new RegExp(req.body.LKey,'i')  } } , updates , {new:true} );
+
 
             if (result==null || result=='') {
                 //res.send('0');
@@ -90,6 +141,15 @@ async function GetOneProduct(req, res, next) {
             } else {
                 //res.send(result);
                 // console.log('1 entry found' );
+
+                // const updates = {
+                //     // "LKey":req.body.LKey,
+                //     "lcdt":new Date(),
+                // };   //updating only lcdt
+                
+                // const result1 = await allProducts.findOneAndUpdate({ LKey : { $regex: new RegExp(req.body.LKey,'i')  } } , updates , {new:true} );
+                // console.log('lcdt entry = ' + result.lcdt);
+
             }
             if (res===null)
                 return result;
