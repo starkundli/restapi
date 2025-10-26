@@ -153,11 +153,11 @@ async function GetOneProduct(req, res, next) {
                 // };   //updating only lcdt
                 
                 // const result1 = await allProducts.findOneAndUpdate({ LKey : { $regex: new RegExp(req.body.LKey,'i')  } } , updates , {new:true} );
-                if (Number(req.body.uplcdt)===1) {
-                    console.log('lcdt entry = ' + result.lcdt);
-                } else {
-                    console.log('1 entry found' );
-                }
+                // if (Number(req.body.uplcdt)===1) {
+                //     console.log('lcdt entry = ' + result.lcdt);
+                // } else {
+                //     console.log('1 entry found' );
+                // }
             }
             if (res===null)
                 return result;
