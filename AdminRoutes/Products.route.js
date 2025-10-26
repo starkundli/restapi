@@ -126,13 +126,18 @@ async function GetOneProduct(req, res, next) {
             
             // console.log(result + ' = 0 found' );
 
+            var result;
+            if (Number(req.body.uplcdt)===1) {
 
-            const updates = {
-                "lcdt":new Date(),
-            };   //updating only lcdt
-                
-            const result = await allProducts.findOneAndUpdate({ LKey : { $regex: new RegExp(req.body.LKey,'i')  } } , updates , {new:true} );
+                const updates = {
+                    "lcdt":new Date(),
+                };   //updating only lcdt
+                result = await allProducts.findOneAndUpdate({ LKey : { $regex: new RegExp(req.body.LKey,'i')  } } , updates , {new:true} );
 
+            } else {
+                var result = await allProducts.findOne({ LKey : { $regex: new RegExp("^"+req.body.LKey+"$",'i')  } })    //ignoring case not spaces
+                // courtesy : https://www.geeksforgeeks.org/mongodb-query-with-case-insensitive-search/
+            }
 
             if (result==null || result=='') {
                 //res.send('0');
@@ -148,8 +153,11 @@ async function GetOneProduct(req, res, next) {
                 // };   //updating only lcdt
                 
                 // const result1 = await allProducts.findOneAndUpdate({ LKey : { $regex: new RegExp(req.body.LKey,'i')  } } , updates , {new:true} );
-                // console.log('lcdt entry = ' + result.lcdt);
-
+                if (Number(req.body.uplcdt)===1) {
+                    console.log('lcdt entry = ' + result.lcdt);
+                } else {
+                    console.log('1 entry found' );
+                }
             }
             if (res===null)
                 return result;
