@@ -487,12 +487,13 @@ async function GetOtpForValidKey(req, res) {
                 console.log('app not verifying');
                 res.send('-1');
             } else if (!MobileVerified) {
-                console.log('Mobile not verifying : ' + CurrKeyDetails.ClMobile);
+                console.log('Mobile not verifying : ' + CurrKeyDetailsDB.ClMobile);
                 res.send('-2');
             }
             return null;
         }
-
+        
+        /*  27.10.2025 remming it for a while till the whole idea of its requirement is understood
         var d = new Date();
         var seconds = Math.floor(d.getTime() / 1);      //Math.round was giving the 30-40 secs difference dny
         //ref : https://stackoverflow.com/questions/25250551/node-js-how-to-generate-timestamp-unix-epoch-format
@@ -504,7 +505,7 @@ async function GetOtpForValidKey(req, res) {
             res.send('1');
             return;    
         }
-        
+        */
         // console.log (seconds + ' = ' + inputs.actc + ' = ' + (seconds - parseFloat(inputs.actc)));
         
         SetExpOTPForServer(inputs.actc);
