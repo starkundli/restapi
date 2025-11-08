@@ -57,6 +57,7 @@ router.use("/", async (req, res, next) => {
                 // console.log('hello from main all handler' );
                 // res.send(result);
                 CurrKeyDetailsDB = result;
+                CurrLKey = CurrKeyDetailsDB.LKey;
                 next();
             }
         } else {
@@ -177,10 +178,39 @@ var licenseActivated = false;
 async function ActivateNewLicense(req, res) {
     licenseActivated = false;
     try {
-        const updates = req.body;
+        // const updates = req.body;
+        const updates = {
+            // "LKey":CurrLKey,     'lkey could hv been entered as different case hence donot disturb original lkey case
+            "actc":"",
+            "ClName":"",
+            "ClMobile":"",
+            "ClEmail":"",
+            "ClCity":"",
+            "dv1":"",
+            "dv2":"",
+            "dv3":"",
+            "dv4":"",
+            "inpr":"",
+            "rlkd":"",
+            "lcdt":"",
+            "ladt":"",
+            "fadt":"",
+            "tac":0,
+            "tdc":0,
+        };   //updating only required fields
+
         SetExpOTPForServer(req.body.actc);
         if (exo.length==4) {
             
+            updates.actc = req.body.actc;
+            updates.ClName = req.body.ClName;
+            updates.ClMobile = req.body.ClMobile;
+            updates.ClEmail = req.body.ClEmail;
+            updates.ClCity = req.body.ClCity;
+            updates.dv1 = req.body.dv1;
+            updates.dv2 = req.body.dv2;
+            updates.dv3 = req.body.dv3;
+            updates.dv4 = req.body.dv4;
             updates.inpr = "";
             updates.rlkd = "";
             updates.lcdt = currTran.tranDT;
@@ -542,10 +572,14 @@ async function GetOtpForValidKey(req, res) {
 
 async function UpdateOnlyUserConstants(req, res, next) {
     try {
-        const updates = {"LKey":req.body.LKey,
-            "conu":req.body.conu};   //updating only consU , no matter whatever extra is passed
-        if (updates.LKey+''!='') {
-            const result = await allKeys.findOneAndUpdate({LKey:updates.LKey} , updates , {new:true} )
+        //const updates = {"LKey":req.body.LKey,
+        //    "conu":req.body.conu};   //updating only consU , no matter whatever extra is passed
+        const updates = {"conu":req.body.conu};   //updating only consU , no matter whatever extra is passed
+            
+        // if (updates.LKey+''!='') {
+        if (req.body.LKey+''!='') {
+            //const result = await allKeys.findOneAndUpdate({LKey:updates.LKey} , updates , {new:true} )
+            const result = await allKeys.findOneAndUpdate({ LKey : { $regex: new RegExp(req.body.LKey,'i')  } } , updates , {new:true} );
             if (result==null) {
                 res.send('0');
                 console.log('nothing updated');
