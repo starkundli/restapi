@@ -11,8 +11,8 @@ POST http://localhost:1974/client/gcd
 Content-Type: application/json
 
 {
-    "LKey":"fMFJyHzKxkBw46IHWKC4",
-    "uplcdt":"1"
+    "LKey": "xdeXHoSNdZreFYlGWMrv",
+    "actc": 1
 }
 
 ###

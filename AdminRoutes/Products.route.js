@@ -77,7 +77,7 @@ async function GetAllProducts(req, res, next) {
 
     // await allProducts.updateMany({}, {$unset: {backupInfo:{lastBackupDate:"-"}}} );
 
-    var projection = { 
+    var projectionForALL = { 
         LKey: 1, 
         appGroup: 1, 
         appName: 1, 
@@ -101,7 +101,7 @@ async function GetAllProducts(req, res, next) {
 
     try {
         //const results = await allProducts.find( {}, {} );
-        const results = await allProducts.find( {}, projection );
+        const results = await allProducts.find( {}, projectionForALL );
         res.send(results);
         // console.log(results.length + ' entries found' );
     } catch (error) {
@@ -109,34 +109,44 @@ async function GetAllProducts(req, res, next) {
     }
 }
 
-async function GetOneProduct(req, res, next) {
+async function GetOneProductLimited(req, res, next) {
+
+    var projectionForOne = { 
+        appGroup: 1, 
+        appName: 1, 
+        vudt: 1, 
+        ClName: 1, 
+        ClMobile: 1, 
+        ClEmail: 1, 
+        ClCity: 1, 
+        dv1:1,
+        dv2:1,
+        dv3:1,
+        dv4:1,
+        conf:1,
+        conu:1,
+        inpr: 1,
+        _id: 0 
+        
+    };
+
     try {
         // console.log(req.body.LKey + ' = lkey' );
         if (req.body.LKey+''!='') {
-            //const result = await allProducts.find( { LKey: /^req.body.LKey$/i } )
-            // const result = await allProducts.find({ LKey : { $regex: /req.body.LKey/i } })
-            // const result = await allProducts.findOne( { LKey: req.body.LKey } )
-            
-            //var result = await allProducts.findOne({ LKey : { $regex: new RegExp(req.body.LKey,'i')  } })    //ignoring case not spaces
-            //var result = await allProducts.findOne({ LKey : { $regex: new RegExp("^"+req.body.LKey+"$",'i')  } })    //ignoring case not spaces
-            //// courtesy : https://www.geeksforgeeks.org/mongodb-query-with-case-insensitive-search/
-            
-            // const result = await allProducts.findOne({ LKey : { $regex: new RegExp(req.body.LKey,'i')  } }, {explicit:true}  )    //ignoring case not spaces
-            // var result = await allProducts.findOne({ LKey : /^req.body.LKey$/i } )    //ignoring case not spaces
-            
-            // console.log(result + ' = 0 found' );
-
-            var result;
-            if (Number(req.body.uplcdt)===1) {
-
-                const updates = {
-                    "lcdt":new Date(),
-                };   //updating only lcdt
-                result = await allProducts.findOneAndUpdate({ LKey : { $regex: new RegExp(req.body.LKey,'i')  } } , updates , {new:true} );
-
+            var result, actc, uplcdt;
+            actc = req.body.actc+'';
+            uplcdt = actc.charAt(actc.length-1);
+            //console.log('uplcdt = '+ uplcdt);
+            if (Number(uplcdt)===1) {
+                const updates = { "lcdt":new Date() };   //updating only lcdt
+                
+                // result = await allProducts.findOneAndUpdate({ LKey : { $regex: new RegExp(req.body.LKey,'i')  } } , updates , {new:true} );
+                result = await allProducts.findOneAndUpdate({ LKey : { $regex: new RegExp(req.body.LKey,'i')  } } , updates , {new:true, projection: projectionForOne} );
+                //note findOneAndUpdate asofnow behaves differently as it always returns _id along with other fields in the projection
             } else {
-                var result = await allProducts.findOne({ LKey : { $regex: new RegExp("^"+req.body.LKey+"$",'i')  } })    //ignoring case not spaces
-                // courtesy : https://www.geeksforgeeks.org/mongodb-query-with-case-insensitive-search/
+                //var result = await allProducts.findOne({ LKey : { $regex: new RegExp("^"+req.body.LKey+"$",'i')  } })    //ignoring case not spaces
+                var result = await allProducts.findOne({ LKey : { $regex: new RegExp("^"+req.body.LKey+"$",'i')  } } , projectionForOne )    //ignoring case not spaces
+                //note findOne behaves correctly as it always hides _id along with other fields in the projection
             }
 
             if (result==null || result=='') {
@@ -144,20 +154,7 @@ async function GetOneProduct(req, res, next) {
                 result='0';
                 
             } else {
-                //res.send(result);
-                // console.log('1 entry found' );
-
-                // const updates = {
-                //     // "LKey":req.body.LKey,
-                //     "lcdt":new Date(),
-                // };   //updating only lcdt
                 
-                // const result1 = await allProducts.findOneAndUpdate({ LKey : { $regex: new RegExp(req.body.LKey,'i')  } } , updates , {new:true} );
-                // if (Number(req.body.uplcdt)===1) {
-                //     console.log('lcdt entry = ' + result.lcdt);
-                // } else {
-                //     console.log('1 entry found' );
-                // }
             }
             if (res===null)
                 return result;
@@ -552,7 +549,7 @@ router.delete('/:id' , async(req,res,next) => {
     
 //     }
 
-//     //GetOneProduct()
+//     //GetOneProductLimited()
 //   };
   
 // function GOP2() {
@@ -560,7 +557,7 @@ router.delete('/:id' , async(req,res,next) => {
 // }
 module.exports = { 
     router,
-    GetOneProduct
+    GetOneProductLimited
     // GOP2,
     
   }

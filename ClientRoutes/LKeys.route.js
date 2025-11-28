@@ -18,7 +18,6 @@ var MobileVerified = false;
 var exo = '';
 var noActOnDiffDev = false;
 var noFurtherAct = false;
-
 const app = express();
 
 app.use(express.json());
@@ -38,6 +37,13 @@ router.use("/", async (req, res, next) => {
         
     }
 
+    // FakeReadMode = false;
+    // FakeWriteMode = false;
+    // CurrLKey = req.body.LKey+'';
+    // if (CurrLKey.charAt(CurrLKey.length-1) === " ") FakeReadMode = true;
+    // CurrLKey = CurrLKey.trim();
+
+    req.body.LKey = req.body.LKey.trim();
     CurrLKey = req.body.LKey+'';
     if (CurrLKey!=null && CurrLKey!='') {
         // const result = await allKeys.findOne({'LKey':CurrLKey})
@@ -337,9 +343,25 @@ router.patch('/mkd' , (req,res,next) => { ModifyKeyDetails(req, res, next)} );
 router.patch('/uouc' , (req,res,next) => { UpdateOnlyUserConstants(req, res, next)});
 
 router.post('/gcd', async (req, res, next ) => {            //get client details
-    var rs1 = await adminKeys.GetOneProduct(req, res, next);
+
+    var FakeReadMode = false;
+    var FakeWriteMode = false;
+    var actc, frwcode;
+    actc = req.body.actc+'';
+    frwcode = actc.charAt(actc.length-1);
+    if (Number(frwcode)===6) FakeReadMode = true;
+    if (Number(frwcode)===8) FakeWriteMode = true;
     
-    return rs1;
+    var rs1 = await adminKeys.GetOneProductLimited(req, null, next);//not sending res as we hv to modify o/p and then send response from this method
+    // console.log(rs1);
+    //res = rs1;
+
+    if (FakeReadMode) {
+        rs1.conu = rs1.conu.trim() + " "; 
+    }
+
+    res.send(rs1);
+    // return rs1;
 });
 
 //called from android app GetLKey during activation process
