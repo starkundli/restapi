@@ -21,6 +21,7 @@ router.patch('/uofc' , (req,res,next) => { UpdateOnlyFactoryConstants(req, res, 
 router.post('/anp', (req, res, next ) => {AddNewProduct(req, res, next);});
 
 router.patch('/mkd' , (req,res,next) => { ModifyKeyDetails(req, res, next)} );
+router.patch('/mkdsd' , (req,res,next) => { ModifyKeySelfDA(req, res, next)} );
 
 router.post('/goc', (req, res, next ) => {getOnlineCount(req, res, next)} );
 
@@ -95,7 +96,9 @@ async function GetAllProducts(req, res, next) {
         lcdt: 1, 
         ofd: 1, 
         naodd: 1, 
-        nfa: 1, 
+        nfa: 1,
+        nfd: 1,
+        sdact: 1, 
         _id: 0 
     };
 
@@ -126,6 +129,7 @@ async function GetOneProductLimited(req, res, next) {
         conf:1,
         conu:1,
         inpr: 1,
+        sdact:1,
         _id: 0 
         
     };
@@ -207,7 +211,7 @@ async function UpdateOnlyFactoryConstants(req, res, next) {
 async function AddNewProduct(req, res, next) {
     try {
         var addNewProduct = false;
-        const newLKey = GetRamdomLKey();
+        const newLKey = GetRamdomLKey(req.body.len+'');
         // const lkeyfound = await allProducts.findOne( {LKey:newLKey} )
         const lkeyfound = await allProducts.findOne({ LKey : { $regex: new RegExp(newLKey,'i')  } })    //ignoring case not spaces
         if (lkeyfound==null || '') {
@@ -280,7 +284,7 @@ async function AddNewProduct(req, res, next) {
 }
 
 
-async function ModifyKeyDetails(req, res, next) {
+async function ModifyKeyDetails_16022026(req, res, next) {
     try {
         const updates = {
             "LKey":req.body.LKey,
@@ -288,7 +292,7 @@ async function ModifyKeyDetails(req, res, next) {
             "appName":req.body.appName,
             "vudt":req.body.vudt,
             "budt":req.body.budt
-        };   //updating only appname appseries and vu  no matter whatever extra is passed
+        };   //updating only appname appseries and vu no matter whatever extra is passed
         if (updates.LKey+''!='') {
             const result = await allProducts.findOneAndUpdate({LKey:updates.LKey} , updates , {new:true} )
             if (result==null) {
@@ -303,6 +307,75 @@ async function ModifyKeyDetails(req, res, next) {
         console.log(error.message);
     }
 }
+
+async function ModifyKeyDetails(req, res, next) {
+    try {
+        const updates = {
+            "LKey":req.body.LKey,
+            // "appGroup":req.body.appGroup,
+            // "appName":req.body.appName,
+            "vudt":req.body.vudt ,
+            "nfa":req.body.nfa ,
+            "naodd":req.body.naodd ,
+            $set: { nfd: req.body.nfd } ,
+            "sdact":req.body.sdact 
+            // "budt":req.body.budt
+        };   //updating only vu and act deact flags no matter whatever extra is passed
+        if (updates.LKey+''!='') {
+            const result = await allProducts.findOneAndUpdate({LKey:updates.LKey} , updates , {new:true} )
+            if (result==null) {
+                res.send('0');
+                console.log('nothing updated');
+            } else {
+                res.send('1');
+                console.log('entry updated : ' + result );
+            }
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+async function ModifyKeySelfDA(req, res, next) {
+    try {
+        /*
+        const updates = {
+            "LKey":req.body.LKey,
+            // "appGroup":req.body.appGroup,
+            // "appName":req.body.appName,
+            "sdact":req.body.sdact,
+            // "budt":req.body.budt
+        };   //updating only sdact no matter whatever extra is passed
+        if (updates.LKey+''!='') {
+            const result = await allProducts.findOneAndUpdate({LKey:updates.LKey} , updates , {new:true} )
+            if (result==null) {
+                res.send('0');
+                // console.log('nothing updated');
+            } else {
+                res.send('1');
+                // console.log('entry updated' );
+            }
+        }
+        */
+        if (req.body.LKey+''!='') {
+            const filter = {"LKey": req.body.LKey};
+            // Use $set to ensure fields are added if missing
+            const update = { $set: { sdact: req.body.sdact } }; 
+            const result = await allProducts.findOneAndUpdate(filter, update, {new:true} )
+            if (result==null) {
+                res.send('0');
+                // console.log('nothing updated');
+            } else {
+                res.send('1');
+                // console.log('entry updated = ' + result );
+            }
+        }
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
 
 
 /*
@@ -352,7 +425,7 @@ function zzz2(epoch) {
 
 }
 
-function GetRamdomLKey () {
+function GetRamdomLKey (keylen) {
 
     const random = size => btoa(
         String.fromCharCode(
@@ -363,7 +436,7 @@ function GetRamdomLKey () {
       ).replaceAll('+', 'x').replaceAll('/', 'I').slice(0, size)
       
     //   for (let i = 5; i--;) console.log(random(20))
-        var ret = random(20)+'';
+        var ret = random(Number(keylen))+'';  //20
         // console.log(ret);
         return ret;
 

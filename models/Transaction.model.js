@@ -6,9 +6,9 @@ const Schema = mongoose.Schema
 const transactionSchema = new Schema ({      
     tranDT : {type: Date, required: true} ,
     LKey: {type : String, required: true} ,
-    tranType: {type : String, required: true , default : '1'} ,
+    tranType: {type : String, required: true , default : '1'} , //1=activation , 0 = deactivation
     deviceDetails: {type : String, required: true } ,   //sep by • i.e. alt+0149
-    tranCount: {type : String, required: true , default : '1'} ,
+    tranCount: {type : String, required: true , default : '1'} , // it is the count based on the type of tran, if activated then act count or else deact count
     
 })
 const transactions = mongoose.model('transactions', transactionSchema ); //this OR below line without s

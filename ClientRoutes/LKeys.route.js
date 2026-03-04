@@ -4,6 +4,7 @@ const allTrans = require('../models/Transaction.model.js');
 const adminKeys = require("../AdminRoutes/Products.route.js");
 var currTran = {} ;
 var LKTotalActCount=0;
+
 //const adminTrans = require("../AdminRoutes/Transactions.route.js");
 
 const router = new express.Router();
@@ -11,13 +12,15 @@ const router = new express.Router();
 var CurrLKey = null;
 var CurrKeyDetailsDB = null;
 var CurrKeyTransDB = null;
-var CLKisValid = false;
+var CLKisValidByVUDT = false;
 var CLKisVerified = false;
+var CLKisVerifiedByALL = false;
 var WhichsoftVerified = false;
 var MobileVerified = false;
 var exo = '';
-var noActOnDiffDev = false;
-var noFurtherAct = false;
+//var noActOnDiffDev = false;
+//var noFurtherAct = false;
+var selfDeActStatus = false;
 const app = express();
 
 app.use(express.json());
@@ -25,6 +28,21 @@ app.use(express.urlencoded({extended:true}));
 
 router.use("/", async (req, res, next) => {
     
+    //console.log('Request received:', req.method, req.url);
+    // req.method returns GET POST PATCH ....
+    // req.url returns endpoint literal with slash  like : /anl /vogk /gcd .... 
+/*
+endpoints	purpose		    currently deactivated status check
+/-root
+anl		    activation		true    2
+uouc		app execution 	any     1
+gcd		    app execution 	any     0
+rofk		activation		true    2
+vogk		activation		true    2
+gofvk		app execution 	false   1
+sda		    deactivation 	any     0
+*/
+
     if (req.body.LKey===undefined) {    //all endpoints should have lkey as a param
         if (req.body.otp!=undefined) {  //in this case lkey is requested based on otp
             next();
@@ -34,7 +52,6 @@ router.use("/", async (req, res, next) => {
             // next();
             return null ;
         }
-        
     }
 
     // FakeReadMode = false;
@@ -52,14 +69,36 @@ router.use("/", async (req, res, next) => {
         if (result!=null && result!='') {
             var vd = new Date(result.vudt);
             var cd = new Date();
+            selfDeActStatus = result.sdact;
             if (vd<cd) {
                 // console.log('key expired');
                 res.send('-1');
                 return null;
             } else {
-                CLKisValid=true;
+                CLKisValidByVUDT=true;
+
+                // req.url returns endpoint literal with slash  like : /anl /vogk /gcd .... 
+                switch (req.url.toLowerCase()) {
+                    case "/anl":
+                        if (selfDeActStatus===false) CLKisValidByVUDT = false;
+                        break;
+                    case "/rofk":
+                        if (selfDeActStatus===false) CLKisValidByVUDT = false;
+                        break;
+                    case "/vogk":
+                        if (selfDeActStatus===false) CLKisValidByVUDT = false;
+                        break;
+                    case "/gofvk":
+                        if (selfDeActStatus===true) CLKisValidByVUDT = false;
+                        break;
+                }
+                if (CLKisValidByVUDT === false) {
+                    console.log('to do with sdact');
+                    res.send('0');
+                    return null;
+                }
             }
-            if (CLKisValid) {
+            if (CLKisValidByVUDT) {
                 // console.log('hello from main all handler' );
                 // res.send(result);
                 CurrKeyDetailsDB = result;
@@ -103,13 +142,32 @@ async function VerifyCurrentKey(inputs) {
     CLKisVerified = true;
     
 }
+async function VerifyCurrentKeyByALL(inputs) {
+    
+    CLKisVerifiedByALL = false;
+    
+    if (CurrKeyDetailsDB===null) return;
+    
+    if (CurrKeyDetailsDB.appName!==inputs.appName) return;
+    if (CurrKeyDetailsDB.ClName!==inputs.ClName) return;
+    if (CurrKeyDetailsDB.ClMobile!==inputs.ClMobile) return;
+    if (CurrKeyDetailsDB.ClEmail!==inputs.ClEmail) return;
+    if (CurrKeyDetailsDB.ClCity!==inputs.ClCity) return;
+    
+    CLKisVerifiedByALL = true;
+    
+}
 
 var deviceIsNEW = true;
 router.patch('/anl' , async (req,res) => {        //,next
+
+    var noActOnDiffDev = false;
+    var noFurtherAct = false;
+
 /* sending to response
 exo : all ok
 -1  : validity expired
-0   :
+0   : selfDeActStatus is not matching now handled in root /
 1   : key not found
 2   : invalid key either null or ''
 3   : key not verifying as per whichsoft/mobile/body
@@ -120,23 +178,22 @@ exo : all ok
 8   : try catch error
 */
 
-    if (CLKisValid) {
+    if (CLKisValidByVUDT) {
 
         // const updates = req.body;
         await VerifyCurrentKey(req.body);
         if (!CLKisVerified) {
             // console.log('key not verifying as per body');
             if (!WhichsoftVerified) {
-                console.log('key not verifying at step 1');
+                console.log('knv-1');//key not verifying at step 1');
             } else if (!MobileVerified) {
-                console.log('key not verifying at step 2');
+                console.log('knv-2');
             } else {
-                console.log('key not verifying as per body');
+                console.log('knv-b');//as per body');
             }
             res.send('3');
             return null;
         }
-
         noFurtherAct = CurrKeyDetailsDB.nfa;
         noActOnDiffDev = CurrKeyDetailsDB.naodd;
 
@@ -154,10 +211,11 @@ exo : all ok
             for await (const doc of lktrans) {
                 // console.log(doc);
                 LKTotalActCount = LKTotalActCount + (+doc.tranCount);
-                if (doc.deviceDetails===currTran.deviceDetails) {
+                //if (doc.deviceDetails===currTran.deviceDetails) {
+                if (doc.deviceDetails===currTran.deviceDetails && doc.tranType===currTran.tranType) {
                     deviceIsNEW = false;
                     currTran.tranCount = (+doc.tranCount) + 1;
-                    // break;
+                    break;      //uncommenting on 26.02.2026
                 }
             }
         }
@@ -180,6 +238,7 @@ exo : all ok
         }
     } 
 } );
+
 var licenseActivated = false;
 async function ActivateNewLicense(req, res) {
     licenseActivated = false;
@@ -203,6 +262,7 @@ async function ActivateNewLicense(req, res) {
             "fadt":"",
             "tac":0,
             "tdc":0,
+            "sdact":false,
         };   //updating only required fields
 
         SetExpOTPForServer(req.body.actc);
@@ -247,38 +307,40 @@ async function ActivateNewLicense(req, res) {
             if(deviceIsNEW) updates.tdc = updates.tdc + 1;
             if (updates.tdc==0) updates.tdc = 1;
             
-            // const updates = {
-            //  "LKey":CurrLKey,
-            //  "actInfo":aiObj
-            // };   //updating only actInfo
-
-            //const result1 = await allKeys.findOneAndUpdate({ LKey : { $regex: new RegExp(CurrLKey,'i')  } } , CurrKeyDetailsDB , {new:true} );
+            /*
             const result1 = await allKeys.findOneAndUpdate({ LKey : { $regex: new RegExp(CurrLKey,'i')  } } , updates , {new:true} );
-            //const result2 = await allKeys.findOneAndUpdate({LKey:updates.LKey} , updates , {new:true} )
-            //const result2 = await allKeys.findOneAndUpdate({LKey:updates.LKey} , updates , {new:true} )
             const result2 = await allTrans.findOneAndUpdate({ LKey: currTran.LKey, deviceDetails: currTran.deviceDetails }, currTran, 
                 {
                     returnDocument: 'after', // Return the document after update/insert
                     upsert: true // Create if not found
                 }
             );
-            
+            */
+            var result1=null;
+            var result2=null;
+            result1 = await allKeys.findOneAndUpdate({ LKey : { $regex: new RegExp(CurrLKey,'i')  } } , updates , {new:true} );
+            if (result1 !== null) { //add trans only if record updated
+                result2 = await allTrans.findOneAndUpdate({ LKey: currTran.LKey, deviceDetails: currTran.deviceDetails }, currTran, 
+                {
+                    returnDocument: 'after', // Return the document after update/insert
+                    upsert: true // Create if not found
+                }
+                );
+            }
             if (result1==null) {
                 console.log('nothing updated in key record');
                 res.send('5');
-            // } else if (result2==null) {
-            //     console.log('nothing updated in actinfo');
-            //     res.send('6');
             } else if (result2==null) {
                 console.log('nothing updated in tran record');
                 res.send('6');
             } else {
                 licenseActivated = true;
                 res.send(exo+'');
-                console.log('entries updated');
+                // console.log('entries updated');
                 //console.log(result1 + '\n\n' + result2 + '\n\n' + result3);
                 // console.log(result2);
             }
+
         } else {
             // res.send(result + '\nexo=' + exo);
             console.log('pls retry ...');
@@ -342,6 +404,8 @@ router.patch('/mkd' , (req,res,next) => { ModifyKeyDetails(req, res, next)} );
 */
 router.patch('/uouc' , (req,res,next) => { UpdateOnlyUserConstants(req, res, next)});
 
+router.patch('/sda' , (req,res,next) => { SelfDAL(req, res, next)});
+
 router.post('/gcd', async (req, res, next ) => {            //get client details
 
     var FakeReadMode = false;
@@ -352,7 +416,7 @@ router.post('/gcd', async (req, res, next ) => {            //get client details
     if (Number(frwcode)===6) FakeReadMode = true;
     if (Number(frwcode)===8) FakeWriteMode = true;
     
-    var rs1 = await adminKeys.GetOneProductLimited(req, null, next);//not sending res as we hv to modify o/p and then send response from this method
+    var rs1 = await adminKeys.GetOneProductLimited(req, null, next);//not sending response as we hv to modify o/p and then send response from this method
     // console.log(rs1);
     //res = rs1;
 
@@ -613,6 +677,91 @@ async function UpdateOnlyUserConstants(req, res, next) {
     } catch (error) {
         console.log(error.message);
     }
+}
+
+async function SelfDAL(req, res, next) {
+
+    await VerifyCurrentKeyByALL(req.body);
+    if (!CLKisVerifiedByALL) {
+        console.log('key not verifying as per body');
+        res.send('0');
+        return null;
+    }
+    // console.log('dd = ' + req.body.deviceDetails);
+    //return null;
+    if (req.body.deviceDetails===undefined) {
+        console.log('dd missing');
+        res.send('0');
+        return null;
+    }
+    var noFurtherDeAct = false;
+    noFurtherDeAct = CurrKeyDetailsDB.nfd;
+    if (noFurtherDeAct) {
+        console.log('da not allowed');
+        res.send('0');
+        return null;
+    }
+    
+    try {
+        
+        //const filter = {"LKey": req.body.LKey};
+        const filter = {"LKey": { $regex: new RegExp(req.body.LKey,'i')  }};    //ignore case
+        // console.log('lk=' + req.body.LKey);
+        // Use $set to ensure fields are added if missing
+        // const update = { $set: { sdact: "1" } }; 
+        const update = { $set: { sdact: req.body.sdact } }; 
+        //const result = await allKeys.findOneAndUpdate(filter, update, {new:true} )
+        
+        var result1=null;
+        var result2=null;
+        // console.log('filter= ' + req.body.LKey);
+        // console.log('update= ' + req.body.sdact);
+        result1 = await allKeys.findOneAndUpdate(filter, update, {new:true} )
+        
+        if (result1 !== null) { //add trans only if record updated
+            // console.log("da updated");
+            currTran.tranDT = new Date();
+            currTran.LKey = req.body.LKey;
+            currTran.tranType = "0";
+            currTran.deviceDetails = req.body.deviceDetails;
+            currTran.tranCount = 1;
+
+            const lktrans = await allTrans.find({ LKey : { $regex: new RegExp("^" + req.body.LKey + "$",'i')  } })    //ignoring case but exact match
+            if (lktrans!=null && lktrans!='') {
+                // console.log("Found documents:");
+                for await (const doc of lktrans) {
+                    if (doc.deviceDetails===currTran.deviceDetails && doc.tranType===currTran.tranType) {
+                        // console.log("found this : " + doc);
+                        currTran.tranCount = (+doc.tranCount) + 1;
+                        break;      //uncommenting on 26.02.2026
+                    }
+                }
+            }
+
+            result2 = await allTrans.findOneAndUpdate({ LKey: currTran.LKey, deviceDetails: currTran.deviceDetails }, currTran, 
+            {
+                returnDocument: 'after', // Return the document after update/insert
+                upsert: true // Create if not found
+            }
+            );
+        }
+        
+        if (result1==null) {
+            res.send('-1');
+            console.log('did not da');
+        } else if (result2==null) {
+            res.send('-2');
+            console.log('did not tran for da');
+        } else {
+            res.send('1');  //try to send otp instead of just 1 based on actc
+            console.log('lic da = yes');// + result1 );
+            console.log('tran da = yes');// + result2 );
+        }
+
+    } catch (error) {
+        console.log(error.message);
+    }
+    CLKisVerifiedByALL = false;     //its purpose ends here
 }
 
 async function ModifyKeyDetails(req, res, next) {

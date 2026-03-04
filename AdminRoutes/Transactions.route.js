@@ -23,6 +23,8 @@ var router = new express.Router();
 
 router.post('/gatflk', (req, res, next ) => {GetAllTransForLK(req, res, next);});
 
+// router.patch('/dtbid', (req, res, next ) => {deleteTranById(req, res, next);});  
+
 async function GetAllTransForLK(req, res, next) {
 
     var projection = { 
@@ -31,7 +33,7 @@ async function GetAllTransForLK(req, res, next) {
         tranType: 1, 
         deviceDetails: 1, 
         tranCount: 1, 
-        _id: 0 
+        _id: 1 
     };
 
     if (req.body.LKey+''!='') {
@@ -183,10 +185,11 @@ router.delete('/:id' , async(req,res,next) => {
         const id=req.params.id;
         const result = await  allTransactions.findByIdAndDelete(id);
         if (result==null || '') {
-            // console.log ('TRAN NOT FOUND ?');
+            res.send('0');
+            console.log ('TRAN NOT FOUND ?');
         } else { 
-            res.send(result);
-            // console.log ('TRAN Deleted !');
+            res.send('1');
+            console.log ('TRAN Deleted !');
         }
     } catch (error) {
         console.log(error.message);
@@ -194,6 +197,20 @@ router.delete('/:id' , async(req,res,next) => {
     
 });
 
+async function deleteTranById() {
+  try {
+        const id=req.params.id;
+        const result = await  allTransactions.findByIdAndDelete(id);
+        if (result==null || '') {
+            console.log ('TRAN NOT FOUND ?');
+        } else { 
+            res.send('1');
+            console.log ('TRAN Deleted !');
+        }
+    } catch (error) {
+        console.log(error.message);
+    } 
+}
 
 module.exports = { 
     router//,

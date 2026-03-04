@@ -30,7 +30,6 @@ GET https://restapi-722316705274.us-central1.run.app/products/gap
 ###
 PATCH http://localhost:1974/products/uop
 Content-Type: application/json
-
 {
     "LKey":"",
     "appCode":"456",
@@ -39,8 +38,6 @@ Content-Type: application/json
     
 }
 
-
-###
 
 ### post http://localhost:5000/products/anp
 POST  https://restapi-722316705274.us-central1.run.app/products/anp
@@ -114,11 +111,77 @@ POST http://localhost:1974/client/gcd
 Content-Type: application/json; charset=utf-8
 
 {
-    "LKey": "fMFJyHzKxkBw46IHWKC4"
-       
+    
+    "LKey": "nfPqY1QELD7numVP1FqA"
+    
+    # "KGA3RekoFsnTghsGMshZ"
+    # "nfPqY1QELD7numVP1FqA"
     # "fMFJyHzKxkBw46IHWKC4" 
     # YPyyA3KocxLItViIE08x
 }
+
+
+###
+PATCH http://localhost:1974/client/sda
+Content-Type: application/json
+
+{
+    "LKey":"nfPqY1QELD7numVP1FqA" , 
+    "ClName" : "kamlesh 2030" , 
+    "ClMobile" : "7666" , 
+    "ClEmail" : "kdp2030" , 
+    "ClCity" : "ulhas" , 
+    "appName" : "Astro-Office - 2030" , 
+    "sdact":"1" , 
+    "deviceDetails" : "Dell • Kalyan • Microsoft Windows 10 Pro • 194C01B0 • ESSENCORE SATA SSD , ESS3D1P22BNA03462 , HP2818E3 • 000306F2 • 2DHP882 • /2DHP882/CN7220058J00SV/"
+    
+}
+
+
+###
+PATCH http://localhost:1974/client/sda
+Content-Type: application/json
+
+{
+    "LKey":"KGA3RekoFsnTghsGMshZ" , 
+    "ClName" : "kamlesh parmani" , 
+    "ClMobile" : "7666994567" , 
+    "ClEmail" : "kamleshparmani@gmail.com" , 
+    "ClCity" : "vileparle" , 
+    "appName" : "Astro-Office - 2030" , 
+    "sdact": 0 , 
+    "deviceDetails" : "hp • Mumbai • Microsoft Windows 10 Pro • D6552484 • SAMSUNG MZVLB2T0HALB-000H1 , 0025_3883_11C5_4DBA. , HPS0NEXG • 00050657 • 1N114905YT • PGXWK0MCYFP032"
+}
+
+# "LKey":"nfPqY1QELD7numVP1FqA" , 
+# "sdact":"0"
+
+
+###
+PATCH http://localhost:1974/products/mkdsd
+Content-Type: application/json
+
+{
+    "LKey":"KGA3RekoFsnTghsGMshZ" , 
+    "sdact":"1"
+}
+
+
+###
+PATCH http://localhost:1974/client/sda
+Content-Type: application/json
+
+{
+    "LKey" : "nfPqY1QELD7numVP1FqA" , 
+    "ClName" : "kamlesh parmani" , 
+    "ClMobile" : "7666994567" , 
+    "ClEmail" : "kamleshparmani@gmail.com" , 
+    "ClCity" : "vileparle" , 
+    "appName" : "Astro-Office - 2030" , 
+    "sdact" : true
+}
+
+
 
 ###
 PATCH http://localhost:5000/client/sudc
@@ -138,6 +201,8 @@ Content-Type: application/json
     "consF":"262AAF29745304A399E8F3F6B1745BFC5B904BC1FAA2DD073701697221E8B63611CD3A1B3045570AA380EBD450BB27B4E392CD0B9C0E5619EEC32A3580DD2A34FCBE4F224F2851C1D9E0BDEA95DE1079C59E185B0EDC17BDEBC4BCDD07CE747987140DB6A95E135ED0D3DFDDDBEC"
 
 }
+
+
 
 ###
 POST http://pollution-monitor.com:8040/license/list
@@ -274,3 +339,15 @@ Content-Type: application/json
 {
     "LKey":"fMFJyHzKxkBw46IHWKC4"
 }
+
+###
+DELETE http://localhost:1974/transations/dtbid
+# Content-Type: application/json
+
+{
+    "id": "69a113d1a614a087d12418e7"
+}
+
+###
+delete http://localhost:1974/transactions/69a113d1a614a087d12418e7
+
