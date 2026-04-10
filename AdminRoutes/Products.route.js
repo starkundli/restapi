@@ -257,7 +257,7 @@ async function AddNewProduct(req, res, next) {
                 newProduct.ofd=false;
                 newProduct.naodd=false;
                 newProduct.nfa=false;
-                newProduct.sdact=true;
+                newProduct.sdact=true;  //check if 1 is required
                 newProduct.fadt="";
                 newProduct.ladt="";
                 newProduct.tac=0;
