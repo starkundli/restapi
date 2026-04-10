@@ -39,7 +39,7 @@ const productSchema = new Schema ({
     nfa : {type: Boolean, default: false},   //noFurtherAct = post first activation this will come into effect handled by ADMIN only
 
     fadt : {type: Date, required: false},           //firstActDT
-    ladt : {type: Date, required: false},           //lastActDT
+    ladt : {type: Date, required: false},           //lastActDT 
     tac : { type: Number, default: 0},              //totalActCount
     tdc : { type: Number, default: 0},      //totalDevCount = act on no. of devices/pcs after first purchase
     sdact : {type: Boolean, default: false},  //selfDeActivated, DeActivation done by client 27.01.2026 should be true to activate in another device and false to validate its LKey 
