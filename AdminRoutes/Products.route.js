@@ -257,11 +257,12 @@ async function AddNewProduct(req, res, next) {
                 newProduct.ofd=false;
                 newProduct.naodd=false;
                 newProduct.nfa=false;
+                newProduct.sdact=true;
                 newProduct.fadt="";
                 newProduct.ladt="";
                 newProduct.tac=0;
                 newProduct.tdc=0;
-
+                
                 const result = await newProduct.save();
                 if (result===null) {
                     // console.log('nothing added');
@@ -328,7 +329,7 @@ async function ModifyKeyDetails(req, res, next) {
                 console.log('nothing updated');
             } else {
                 res.send('1');
-                console.log('entry updated : ' + result );
+                console.log('entry updated'); // + result );
             }
         }
     } catch (error) {

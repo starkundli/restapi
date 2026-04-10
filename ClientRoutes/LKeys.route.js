@@ -77,7 +77,7 @@ sda		    deactivation 	any     0
             } else {
                 CLKisValidByVUDT=true;
 
-                // req.url returns endpoint literal with slash  like : /anl /vogk /gcd .... 
+                // req.url returns endpoint literal with slash  like : /anl /vogk /gofvk .... 
                 switch (req.url.toLowerCase()) {
                     case "/anl":
                         if (selfDeActStatus===false) CLKisValidByVUDT = false;

@@ -42,10 +42,11 @@ const productSchema = new Schema ({
     ladt : {type: Date, required: false},           //lastActDT
     tac : { type: Number, default: 0},              //totalActCount
     tdc : { type: Number, default: 0},      //totalDevCount = act on no. of devices/pcs after first purchase
-    // alwdc : {type: Number, default: 2},     //total devices Allowed for Activation; tdc should be <= alwdc
     sdact : {type: Boolean, default: false},  //selfDeActivated, DeActivation done by client 27.01.2026 should be true to activate in another device and false to validate its LKey 
-    //selfDeregDT: {type: Date, required: false, default: null},
     nfd : {type: Boolean, default: false}   //noFurtherDeAct = if lot of deactivations done (can be checked by trans) we can halt it further handled by ADMIN only
+    
+    // alwdc : {type: Number, default: 2},     //total devices Allowed for Activation; tdc should be <= alwdc
+    //selfDeregDT: {type: Date, required: false, default: null},
     
 })
 const product = mongoose.model('product', productSchema )
