@@ -4,6 +4,7 @@ const allTrans = require('../models/Transaction.model.js');
 const adminKeys = require("../AdminRoutes/Products.route.js");
 var currTran = {} ;
 var LKTotalActCount=0;
+var NR=0;
 
 //const adminTrans = require("../AdminRoutes/Transactions.route.js");
 
