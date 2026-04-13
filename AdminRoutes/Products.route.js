@@ -268,7 +268,7 @@ async function AddNewProduct(req, res, next) {
                     // console.log('nothing added');
                     res.send('0');
                 } else {
-                    // console.log('one added');
+                    console.log('one added, sdact = ' + newProduct.sdact);
                     // res.send(result + "\nadded as new");
                     res.send({'LKey':newLKey});
                 }
