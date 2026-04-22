@@ -6,7 +6,7 @@ const Schema = mongoose.Schema
 const transactionSchema = new Schema ({      
     tranDT : {type: Date, required: true} ,
     LKey: {type : String, required: true} ,
-    tranType: {type : String, required: true , default : '1'} , //1=activation , 0 = deactivation
+    tranType: {type : String, required: true , default : '1'} , //1=activation , 0 = deactivation , 2 = ADMIN 
     deviceDetails: {type : String, required: true } ,   //sep by • i.e. alt+0149
     tranCount: {type : String, required: true , default : '1'} , // it is the count based on the type of tran, if activated then act count or else deact count
     

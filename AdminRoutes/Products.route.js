@@ -6,6 +6,7 @@ const express = require('express');
 // var assert = require('assert');
 
 const allProducts = require('../models/Product.model.js');
+const allTrans = require('../models/Transaction.model.js');
 
 var router = new express.Router();
 
@@ -21,7 +22,7 @@ router.patch('/uofc' , (req,res,next) => { UpdateOnlyFactoryConstants(req, res, 
 router.post('/anp', (req, res, next ) => {AddNewProduct(req, res, next);});
 
 router.patch('/mkd' , (req,res,next) => { ModifyKeyDetails(req, res, next)} );
-router.patch('/mkdsd' , (req,res,next) => { ModifyKeySelfDA(req, res, next)} );
+// router.patch('/mkdsd' , (req,res,next) => { ModifyKeySelfDA(req, res, next)} );
 
 router.post('/goc', (req, res, next ) => {getOnlineCount(req, res, next)} );
 
@@ -323,13 +324,56 @@ async function ModifyKeyDetails(req, res, next) {
             // "budt":req.body.budt
         };   //updating only vu and act deact flags no matter whatever extra is passed
         if (updates.LKey+''!='') {
-            const result = await allProducts.findOneAndUpdate({LKey:updates.LKey} , updates , {new:true} )
-            if (result==null) {
-                res.send('0');
-                console.log('nothing updated');
+            var result1=null;
+            var result2=null;
+            result1 = await allProducts.findOneAndUpdate({LKey:updates.LKey} , updates , {new:true} )
+            // if (result1==null) {
+            //     res.send('0');
+            //     console.log('nothing updated');
+            // } else {
+            //     res.send('1');
+            //     console.log('entry updated'); // + result );
+            // }
+            if (result1 !== null) { //add trans only if record updated
+
+                var zzz = "vudt=" + result1.vudt + ", nfa=" + result1.nfa + ", naodd=" + result1.naodd + 
+                ", nfd=" + result1.nfd + ", sdact=" + result1.sdact;
+
+                var currTran = {} ;
+                currTran.tranDT = new Date();
+                currTran.LKey = req.body.LKey;
+                currTran.tranType = "2"; //req.body.sdact + "";    //could be 1 or 0
+                currTran.deviceDetails = zzz ;
+                currTran.tranCount = 1;
+
+                const lktrans = await allTrans.find({ LKey : { $regex: new RegExp("^" + req.body.LKey + "$",'i')  } })    //ignoring case but exact match
+                if (lktrans!=null && lktrans!='') {
+                    // console.log("Found documents:");
+                    for await (const doc of lktrans) {
+                        if (doc.deviceDetails===currTran.deviceDetails && doc.tranType===currTran.tranType) {
+                            // console.log("found this : " + doc);
+                            currTran.tranCount = (+doc.tranCount) + 1;
+                            break;      //uncommenting on 26.02.2026
+                        }
+                    }
+                }
+                result2 = await allTrans.findOneAndUpdate({ LKey: currTran.LKey, deviceDetails: currTran.deviceDetails }, currTran, 
+                {
+                    returnDocument: 'after', // Return the document after update/insert
+                    upsert: true // Create if not found
+                }
+                );
+            }
+            if (result1==null) {
+                res.send('-1');
+                console.log('did not da');
+            } else if (result2==null) {
+                res.send('-2');
+                console.log('did not tran for da');
             } else {
-                res.send('1');
-                console.log('entry updated'); // + result );
+                res.send('1');  //try to send otp instead of just 1 based on actc
+                console.log('lic da = yes');// + result1 );
+                console.log('tran da = yes');// + result2 );
             }
         }
     } catch (error) {
@@ -359,17 +403,58 @@ async function ModifyKeySelfDA(req, res, next) {
         }
         */
         if (req.body.LKey+''!='') {
+            var result1=null;
+            var result2=null;
             const filter = {"LKey": req.body.LKey};
             // Use $set to ensure fields are added if missing
             const update = { $set: { sdact: req.body.sdact } }; 
-            const result = await allProducts.findOneAndUpdate(filter, update, {new:true} )
-            if (result==null) {
-                res.send('0');
-                // console.log('nothing updated');
-            } else {
-                res.send('1');
-                // console.log('entry updated = ' + result );
+            result1 = await allProducts.findOneAndUpdate(filter, update, {new:true} )
+            // if (result1==null) {
+            //     res.send('0');
+            //     // console.log('nothing updated');
+            // } else {
+            //     res.send('1');
+            //     // console.log('entry updated = ' + result );
+            // }
+            if (result1 !== null) { //add trans only if record updated
+                var currTran = {} ;
+                currTran.tranDT = new Date();
+                currTran.LKey = req.body.LKey;
+                currTran.tranType = req.body.sdact + "";    //could be 1 or 0
+                currTran.deviceDetails = "ADMIN";
+                currTran.tranCount = 1;
+
+                const lktrans = await allTrans.find({ LKey : { $regex: new RegExp("^" + req.body.LKey + "$",'i')  } })    //ignoring case but exact match
+                if (lktrans!=null && lktrans!='') {
+                    // console.log("Found documents:");
+                    for await (const doc of lktrans) {
+                        if (doc.deviceDetails===currTran.deviceDetails && doc.tranType===currTran.tranType) {
+                            // console.log("found this : " + doc);
+                            currTran.tranCount = (+doc.tranCount) + 1;
+                            break;      //uncommenting on 26.02.2026
+                        }
+                    }
+                }
+                result2 = await allTrans.findOneAndUpdate({ LKey: currTran.LKey, deviceDetails: currTran.deviceDetails }, currTran, 
+                {
+                    returnDocument: 'after', // Return the document after update/insert
+                    upsert: true // Create if not found
+                }
+                );
             }
+            if (result1==null) {
+                res.send('-1');
+                console.log('did not da');
+            } else if (result2==null) {
+                res.send('-2');
+                console.log('did not tran for da');
+            } else {
+                res.send('1');  //try to send otp instead of just 1 based on actc
+                console.log('lic da = yes');// + result1 );
+                console.log('tran da = yes');// + result2 );
+            }
+
+
         }
 
     } catch (error) {

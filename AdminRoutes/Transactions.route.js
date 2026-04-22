@@ -40,7 +40,7 @@ async function GetAllTransForLK(req, res, next) {
         try {
             //const results = await allTransactions.find( {}, {} );
             //const results = await allTransactions.find({ LKey : { $regex: new RegExp("^"+req.body.LKey+"$",'i')  } })    //ignoring case but exact match
-            const results = await allTransactions.find({ LKey : { $regex: new RegExp("^"+req.body.LKey+"$",'i')  } }, projection)    //ignoring case but exact match
+            const results = await allTransactions.find({ LKey : { $regex: new RegExp("^"+req.body.LKey+"$",'i')  } }, projection).sort({tranDT: 1})    //ignoring case but exact match, use trandt: -1 for descending order
             if (results!=null && results!='') {
                 res.send(results);
             } else {
