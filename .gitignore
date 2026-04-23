@@ -2,3 +2,5 @@ node_modules
 rest.http
 allAPIs.txt
 .env
+.env.local
+.env.*.local
